@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 4173
 
 # Set the command to run the app
-CMD ["npm", "run", "preview", "--", "--host"]
+CMD ["npm", "run", "dev"]

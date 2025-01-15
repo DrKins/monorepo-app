@@ -21,6 +21,7 @@ export default function Profile() {
       <Menu>
         <Text>Profile</Text>
         <MenuButton
+          disabled
           padding={0}
           margin={0}
           display={"block"}
@@ -32,7 +33,7 @@ export default function Profile() {
               borderWidth={"2px"}
               borderColor={"green.200"}
               size="sm"
-              name="Ryan Florence"
+              name="NN"
             />
           }
         />

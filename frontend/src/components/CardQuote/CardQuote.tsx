@@ -17,29 +17,30 @@ import {
   BsThreeDotsVertical,
 } from "react-icons/bs";
 
-export default function CardQuote() {
+export default function CardQuote({ content }: { content: string }) {
   return (
-    <Card maxWidth={{ base: "unset", lg: "300px" }}>
+    <Card flex={1}>
       <CardBody display={"flex"} gap={5}>
         <Avatar
           borderWidth={"2px"}
-          borderColor={"green.200"}
+          borderColor={"red.200"}
           size="sm"
-          name="Ryan Florence"
+          name="NN"
         />
-        <Text>View a summary of all your customers over the last month.</Text>
+        <Text>{content}</Text>
       </CardBody>
       <CardFooter display={"flex"} gap={5} justifyContent={"flex-end"}>
-        <Button background={"transparent"} shadow={"sm"}>
+        <Button background={"transparent"} shadow={"sm"} disabled>
           <Icon as={BsHandThumbsUpFill} color={"green.300"} />
           {Math.round(Math.random() * 10)}
         </Button>
-        <Button background={"transparent"} shadow={"sm"}>
+        <Button background={"transparent"} shadow={"sm"} disabled>
           <Icon as={BsHandThumbsDownFill} color={"gray"} />
           {Math.round(Math.random() * 1)}
         </Button>
         <Menu>
           <MenuButton
+            disabled
             as={Button}
             iconSpacing={0}
             rightIcon={<BsThreeDotsVertical />}

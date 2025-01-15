@@ -11,12 +11,22 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=your_root_password
-      - DB_NAME=mydatabase
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     depends_on:
       - mysql
+    networks:
+      - app-network
+    entrypoint: [
+        "./wait-for-it.sh",
+        "mysql:3306",
+        "--",
+        "npm",
+        "run",
+        "start:dev",
+      ] # Ensure MySQL is ready before starting the backend
 
   frontend:
     build:
@@ -28,7 +38,9 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_BACKEND_URL=http://localhost:5000
+      - VITE_BACKEND_URL=http://localhost:5001
+    networks:
+      - app-network
 
   mysql:
     image: mysql:8.0
@@ -37,9 +49,19 @@ services:
     ports:
       - "3307:3306"
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
 
 volumes:
   mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

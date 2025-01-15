@@ -16,18 +16,23 @@ export default function HeaderControlls({
       gap={5}
       mb={isOpen ? 5 : 0}>
       <Input
+        disabled
         placeholder="Search cards"
         width={{ base: "unset", md: "300px" }}
         _placeholder={{ color: "gray.400" }}
       />
 
-      <Select width={{ base: "unset", md: "300px" }} defaultValue={"option3"}>
+      <Select
+        disabled
+        width={{ base: "unset", md: "300px" }}
+        defaultValue={"option3"}>
         <option value="option1">Top rated</option>
         <option value="option2">Worst rated</option>
         <option value="option3">Most recent</option>
       </Select>
 
       <Button
+        disabled
         background={"green.300"}
         gap={2}
         onClick={() => handleOpen(!isOpen)}>

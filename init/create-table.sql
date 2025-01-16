@@ -5,10 +5,9 @@ CREATE TABLE IF NOT EXISTS cards (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     value INT NOT NULL,
-    content TEXT NOT NULL -- Added content column
+    content TEXT NOT NULL
 );
 
--- Add some initial data
 INSERT INTO cards (name, value, content) VALUES 
     ('Card 1', 1, 'Some content for Card 1'),
     ('Card 2', 2, 'Some content for Card 2'),
@@ -20,3 +19,11 @@ INSERT INTO cards (name, value, content) VALUES
     ('Card 8', 8, 'Some content for Card 8'),
     ('Card 9', 9, 'Some content for Card 9'),
     ('Card 10', 10, 'Some content for Card 10');
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO users (username, password) VALUES ('admin@gmail.com', 'admin');

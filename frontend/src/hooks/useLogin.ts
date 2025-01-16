@@ -26,7 +26,8 @@ const loginRequest = async ({
   });
 
   if (!response.ok) {
-    throw new Error("Login failed");
+    const error = await response.json();
+    throw error;
   }
 
   return response.json();
@@ -44,6 +45,7 @@ export const useLogin = () => {
     },
     onError: (error) => {
       console.error(error);
+      Promise.reject(error);
     },
   });
 };

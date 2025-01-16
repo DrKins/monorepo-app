@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
+
 import { AuthRepository } from "../repository/auth.repository";
+import { generateErrorResponse } from "../utils/generateErrorResponse";
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 export class AuthService {
@@ -13,17 +15,15 @@ export class AuthService {
     try {
       const { username, password } = req.body;
       if (!username || !password) {
-        throw new Error("Validation: Username and password are required");
-      }
-
-      if (password.length < 4) {
-        throw new Error("Validation: Password must be at least 8 characters");
+        throw new Error("Username and password are required");
       }
 
       const user = await this.authRepository.login(req);
       return user;
     } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
+      if (error instanceof Error) {
+        res.status(400).json(generateErrorResponse(error.message));
+      }
     }
   }
 

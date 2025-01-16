@@ -1,22 +1,40 @@
-import { Box, Button, Icon, Input, Link, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Icon,
+  Input,
+  Link,
+  Text,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { BiSolidLogInCircle } from "react-icons/bi";
 import { BsLockFill } from "react-icons/bs";
+import { MdError } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 export default function Login() {
   const [login, setLogin] = useState({ username: "", password: "" });
+  const [hasErrors, setHasErrors] = useState(false);
   const navigate = useNavigate();
-  const mutation = useLogin();
+  const { mutate, isError, error } = useLogin();
+
+  useEffect(() => {
+    console.log(error);
+    setHasErrors(isError);
+  }, [isError]);
 
   const handleStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setHasErrors(false);
     setLogin({ ...login, [event.target.name]: event.target.value });
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     console.log(event);
     event.preventDefault();
-    mutation.mutate(login);
+    mutate(login);
   };
 
   return (
@@ -48,42 +66,69 @@ export default function Login() {
           width={"40%"}>
           Login page
         </Text>
-        <Icon color={"blue.200"} as={BsLockFill} boxSize={"25px"} />
-        <Box
-          onSubmit={onSubmit}
-          as="form"
-          display={"flex"}
-          flexDirection={{ base: "column", lg: "row" }}
-          gap={5}
-          width={"100%"}>
-          <Input
-            name="username"
-            color={"white"}
-            placeholder="Email"
-            type="email"
-            width={"100%"}
-            onChange={handleStateChange}
-          />
-          <Input
-            name="password"
-            placeholder="Password"
-            type="password"
-            width={"100%"}
-            onChange={handleStateChange}
-          />
-          <Button
-            type="submit"
-            width={{ base: "100%", lg: "50%" }}
-            color={"blue.500"}
-            rightIcon={
-              <Icon
-                color={"blue.500"}
-                as={BiSolidLogInCircle}
-                boxSize={"35px"}
+        <Icon
+          color={hasErrors ? "red.200" : "blue.200"}
+          as={BsLockFill}
+          boxSize={"25px"}
+        />
+        <Box>
+          <Box
+            onSubmit={onSubmit}
+            as="form"
+            display={"flex"}
+            flexDirection={{ base: "column", lg: "row" }}
+            alignItems={"center"}
+            gap={5}
+            width={"100%"}>
+            <FormControl>
+              <FormLabel>Email address</FormLabel>
+              <Input
+                name="username"
+                color={"white"}
+                type="email"
+                width={"100%"}
+                isInvalid={hasErrors}
+                errorBorderColor="red.300"
+                onChange={handleStateChange}
               />
-            }>
-            Login
-          </Button>
+              <FormHelperText color={"whiteAlpha.700"}>
+                Please enter your email.
+              </FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Password</FormLabel>
+              <Input
+                name="password"
+                type="password"
+                width={"100%"}
+                isInvalid={hasErrors}
+                errorBorderColor="red.300"
+                onChange={handleStateChange}
+              />
+              <FormHelperText color={"whiteAlpha.700"}>
+                Please enter your password.
+              </FormHelperText>
+            </FormControl>
+            <Button
+              type="submit"
+              width={{ base: "100%", lg: "50%" }}
+              color={"blue.500"}
+              rightIcon={
+                <Icon
+                  color={"blue.500"}
+                  as={BiSolidLogInCircle}
+                  boxSize={"35px"}
+                />
+              }>
+              Login
+            </Button>
+          </Box>
+          {hasErrors && (
+            <Box display={"flex"} gap={2}>
+              <Icon color={"red.200"} as={MdError} boxSize={"25px"} />
+              <Text color={"red.200"}>{error?.message}</Text>
+            </Box>
+          )}
         </Box>
       </Box>
       <Text alignSelf={"flex-start"}>

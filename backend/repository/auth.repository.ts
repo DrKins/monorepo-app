@@ -9,11 +9,10 @@ export class AuthRepository {
         where: { username, password },
       });
       if (!user) {
-        throw new Error("User not found");
+        throw new Error("Invalid username or password");
       }
       return user;
     } catch (error) {
-      console.error("Can't log in, error occured:", error);
       throw error;
     }
   }

@@ -1,7 +1,8 @@
 import { ArrowDownIcon } from "@chakra-ui/icons";
 import { Box, Icon, Spinner, Text } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CardQuote from "../components/CardQuote/CardQuote";
 import CreateCardQuote from "../components/CreateCardQuote/CreateCardQuote";
 import HeaderControlls from "../components/HeaderControlls/HeaderControlls";
@@ -12,6 +13,13 @@ const MotionBox = motion(Box);
 export default function Home() {
   const [isCreateCardOpen, setIsCreateCardOpen] = useState(false);
   const { data } = useCards();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("user")) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <AnimatePresence>

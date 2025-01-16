@@ -12,13 +12,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ChakraProvider theme={theme}>
-        <Box
-          p={6}
-          minHeight={"100vh"}
-          display={"flex"}
-          justifyContent={"start"}
-          alignItems={"center"}
-          flexDirection={"column"}>
+        <Box display={"flex"} alignItems={"center"} flexDirection={"column"}>
           <RouterProvider router={Router} />
         </Box>
       </ChakraProvider>

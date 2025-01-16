@@ -3,12 +3,20 @@ import { useState } from "react";
 import { BiSolidLogInCircle } from "react-icons/bi";
 import { BsLockFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin";
 export default function Login() {
-  const [login, setLogin] = useState({ email: "", password: "" });
+  const [login, setLogin] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+  const mutation = useLogin();
 
   const handleStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLogin({ ...login, [event.target.name]: event.target.value });
+  };
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    console.log(event);
+    event.preventDefault();
+    mutation.mutate(login);
   };
 
   return (
@@ -16,7 +24,6 @@ export default function Login() {
       display={"flex"}
       gap={2}
       flexDirection={"column"}
-      alignItems={"center"}
       justifyContent={"center"}
       height={"100%"}
       width={"100%"}>
@@ -43,13 +50,14 @@ export default function Login() {
         </Text>
         <Icon color={"blue.200"} as={BsLockFill} boxSize={"25px"} />
         <Box
+          onSubmit={onSubmit}
           as="form"
           display={"flex"}
           flexDirection={{ base: "column", lg: "row" }}
           gap={5}
           width={"100%"}>
           <Input
-            name="email"
+            name="username"
             color={"white"}
             placeholder="Email"
             type="email"
@@ -64,9 +72,9 @@ export default function Login() {
             onChange={handleStateChange}
           />
           <Button
+            type="submit"
             width={{ base: "100%", lg: "50%" }}
             color={"blue.500"}
-            onClick={() => navigate("/home")}
             rightIcon={
               <Icon
                 color={"blue.500"}

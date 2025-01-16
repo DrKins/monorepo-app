@@ -9,9 +9,15 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+const showEdit = false;
 
 export default function Profile() {
   const navigate = useNavigate();
+  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const handleLogOut = () => {
+    sessionStorage.removeItem("user");
+    navigate("/login");
+  };
   return (
     <Box
       marginLeft={{ base: "0", lg: "auto" }}
@@ -19,9 +25,9 @@ export default function Profile() {
       gap={2}
       alignItems={"center"}>
       <Menu>
-        <Text>Profile</Text>
+        {user && <Text>{user}</Text>}
         <MenuButton
-          disabled
+          disabled={!user}
           padding={0}
           margin={0}
           display={"block"}
@@ -33,13 +39,13 @@ export default function Profile() {
               borderWidth={"2px"}
               borderColor={"green.200"}
               size="sm"
-              name="NN"
+              name={user}
             />
           }
         />
         <MenuList color={"black"}>
-          <MenuItem>Edit Profile</MenuItem>
-          <MenuItem color={"red.400"} onClick={() => navigate("/login")}>
+          {showEdit && <MenuItem>Edit Profile</MenuItem>}
+          <MenuItem color={"red.400"} onClick={handleLogOut}>
             Log out
           </MenuItem>
         </MenuList>

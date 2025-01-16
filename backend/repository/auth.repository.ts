@@ -8,6 +8,9 @@ export class AuthRepository {
       const user = await User.findOne({
         where: { username, password },
       });
+      if (!user) {
+        throw new Error("User not found");
+      }
       return user;
     } catch (error) {
       console.error("Can't log in, error occured:", error);

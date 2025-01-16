@@ -1,3 +1,7 @@
 export const QUERY_KEYS = {
-  CARDS: "cards",
+  CARDS: ["cards"],
+};
+
+export const MUTATION_KEYS = {
+  LOGIN: ["login"],
 };

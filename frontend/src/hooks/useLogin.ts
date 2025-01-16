@@ -1,28 +1,26 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { MUTATION_KEYS } from "../constants/queryKeys";
 import { backendUrl } from "../utils/getBackendUrl";
 
 type LoginData = {
-  username: string;
+  email: string;
   password: string;
 };
 
-type UserData = {
-  id: number;
-  username: string;
-  password: string;
+type ErrorResponse = {
+  errors: {
+    message: string;
+  }[];
 };
 
-const loginRequest = async ({
-  username,
-  password,
-}: LoginData): Promise<UserData> => {
+const loginRequest = async ({ email, password }: LoginData) => {
   const response = await fetch(`${backendUrl}/api/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ email, password }),
   });
 
   if (!response.ok) {
@@ -37,13 +35,14 @@ export const useLogin = () => {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: ({ username, password }: LoginData) =>
-      loginRequest({ username, password }),
+    mutationKey: MUTATION_KEYS.LOGIN,
+    mutationFn: ({ email, password }: LoginData) =>
+      loginRequest({ email, password }),
     onSuccess: (user) => {
-      sessionStorage.setItem("user", JSON.stringify(user.username));
+      sessionStorage.setItem("user", JSON.stringify(user.email));
       navigate("/");
     },
-    onError: (error) => {
+    onError: (error: ErrorResponse) => {
       console.error(error);
       Promise.reject(error);
     },

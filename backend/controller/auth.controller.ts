@@ -9,8 +9,8 @@ export class AuthController {
   }
 
   async login(req: Request, res: Response) {
-    const tasks = await this.authService.login(req, res);
-    res.json(tasks);
+    const user = await this.authService.login(req, res);
+    res.json(user);
   }
 
   // async createCard(req: Request, res: Response) {

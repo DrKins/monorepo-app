@@ -9,7 +9,7 @@ type Card = {
 
 export const useCards = () => {
   return useQuery<Card[], unknown>({
-    queryKey: [QUERY_KEYS.CARDS],
+    queryKey: QUERY_KEYS.CARDS,
     queryFn: () => fetch(`${backendUrl}/api/cards`).then((res) => res.json()),
     refetchOnWindowFocus: false,
     staleTime: Infinity,

@@ -1,12 +1,15 @@
-import type { Request } from "express";
 import { User } from "../models/User";
 
+interface validatedData {
+  email: string;
+  password: string;
+}
+
 export class AuthRepository {
-  async login(req: Request) {
+  async login({ email, password }: validatedData) {
     try {
-      const { username, password } = req.body;
       const user = await User.findOne({
-        where: { username, password },
+        where: { email, password },
       });
       if (!user) {
         throw new Error("Invalid username or password");

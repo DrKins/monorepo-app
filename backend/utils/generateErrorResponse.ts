@@ -1,5 +1,5 @@
 export const generateErrorResponse = (message: string) => {
   return {
-    message,
+    errors: [{ message }],
   };
 };

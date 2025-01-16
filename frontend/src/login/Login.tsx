@@ -2,39 +2,45 @@ import {
   Box,
   Button,
   FormControl,
-  FormHelperText,
   FormLabel,
   Icon,
   Input,
   Link,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { BiSolidLogInCircle } from "react-icons/bi";
 import { BsLockFill } from "react-icons/bs";
 import { MdError } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { MUTATION_KEYS } from "../constants/queryKeys";
 import { useLogin } from "../hooks/useLogin";
 export default function Login() {
-  const [login, setLogin] = useState({ username: "", password: "" });
-  const [hasErrors, setHasErrors] = useState(false);
+  const [login, setLogin] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const { mutate, isError, error } = useLogin();
-
-  useEffect(() => {
-    console.log(error);
-    setHasErrors(isError);
-  }, [isError]);
+  const queryClient = useQueryClient();
 
   const handleStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHasErrors(false);
+    resetError();
     setLogin({ ...login, [event.target.name]: event.target.value });
   };
 
+  const resetError = () => {
+    const queryState = queryClient.getQueryState(MUTATION_KEYS.LOGIN);
+    if (queryState?.error)
+      queryClient.resetQueries({ queryKey: MUTATION_KEYS.LOGIN });
+  };
+
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    console.log(event);
     event.preventDefault();
     mutate(login);
+  };
+
+  const updateInputColorOnError = (type: string) => {
+    const emailErrors = error?.errors.filter((e) => e.message.includes(type));
+    return !!emailErrors?.length;
   };
 
   return (
@@ -44,7 +50,8 @@ export default function Login() {
       flexDirection={"column"}
       justifyContent={"center"}
       height={"100%"}
-      width={"100%"}>
+      width={"100%"}
+      transition={"all ease-in-out 100ms"}>
       <Box
         border={"2px"}
         borderColor={"blue.300"}
@@ -58,19 +65,23 @@ export default function Login() {
         paddingBlock={6}
         borderRadius={"md"}>
         <Text
+          mt={isError ? 6 : 2}
           display={{ base: "none", lg: "block" }}
-          textAlign={"center"}
+          textAlign={isError ? "start" : "center"}
           color={"white"}
           fontSize={"3xl"}
           fontWeight={"semibold"}
+          alignSelf={"start"}
           width={"40%"}>
           Login page
+          <Icon
+            ml={4}
+            alignSelf={isError ? "start" : "center"}
+            color={"blue.200"}
+            as={BsLockFill}
+            boxSize={"25px"}
+          />
         </Text>
-        <Icon
-          color={hasErrors ? "red.200" : "blue.200"}
-          as={BsLockFill}
-          boxSize={"25px"}
-        />
         <Box>
           <Box
             onSubmit={onSubmit}
@@ -83,17 +94,14 @@ export default function Login() {
             <FormControl>
               <FormLabel>Email address</FormLabel>
               <Input
-                name="username"
+                name="email"
                 color={"white"}
                 type="email"
                 width={"100%"}
-                isInvalid={hasErrors}
+                isInvalid={updateInputColorOnError("Email")}
                 errorBorderColor="red.300"
                 onChange={handleStateChange}
               />
-              <FormHelperText color={"whiteAlpha.700"}>
-                Please enter your email.
-              </FormHelperText>
             </FormControl>
             <FormControl>
               <FormLabel>Password</FormLabel>
@@ -101,15 +109,14 @@ export default function Login() {
                 name="password"
                 type="password"
                 width={"100%"}
-                isInvalid={hasErrors}
+                isInvalid={updateInputColorOnError("Password")}
                 errorBorderColor="red.300"
                 onChange={handleStateChange}
               />
-              <FormHelperText color={"whiteAlpha.700"}>
-                Please enter your password.
-              </FormHelperText>
             </FormControl>
             <Button
+              alignSelf={isError ? "start" : "center"}
+              mt={8}
               type="submit"
               width={{ base: "100%", lg: "50%" }}
               color={"blue.500"}
@@ -123,10 +130,15 @@ export default function Login() {
               Login
             </Button>
           </Box>
-          {hasErrors && (
-            <Box display={"flex"} gap={2}>
-              <Icon color={"red.200"} as={MdError} boxSize={"25px"} />
-              <Text color={"red.200"}>{error?.message}</Text>
+          {isError && (
+            <Box mt={4} color={"red.100"}>
+              Something went wrong:
+              {error?.errors?.map((error) => (
+                <Box display={"flex"} gap={2}>
+                  <Icon color={"red.200"} as={MdError} boxSize={"25px"} />
+                  <Text color={"red.200"}>{error.message}</Text>
+                </Box>
+              ))}
             </Box>
           )}
         </Box>

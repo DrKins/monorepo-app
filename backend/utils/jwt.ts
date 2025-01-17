@@ -16,7 +16,7 @@ export const signJwt = async (payload: TokenPayloadInterface) =>
   await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(process.env.JWT_EXPIRATION_TIME!)
+    .setExpirationTime(process.env.JWT_EXPIRATION_TIME ?? "1m")
     .sign(secretKey);
 
 interface CustomRequest extends Request {

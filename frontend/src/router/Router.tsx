@@ -4,6 +4,7 @@ import {
   Route,
 } from "react-router-dom";
 import App from "../App";
+import ErrorPage from "../error/Error";
 import Home from "../home/Home";
 import Login from "../login/Login";
 import Register from "../register/Register";
@@ -38,6 +39,16 @@ const router = createBrowserRouter(
         element={
           <AnimatedLayout>
             <Login />
+          </AnimatedLayout>
+        }
+      />
+      <Route
+        index
+        key={location.pathname}
+        path="/error"
+        element={
+          <AnimatedLayout>
+            <ErrorPage />
           </AnimatedLayout>
         }
       />

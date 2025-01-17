@@ -8,29 +8,19 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { BiSolidLogInCircle } from "react-icons/bi";
 import { BsLockFill } from "react-icons/bs";
 import { MdError } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { MUTATION_KEYS } from "../constants/queryKeys";
 import { useLogin } from "../hooks/useLogin";
 export default function Login() {
   const [login, setLogin] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const { mutate, isError, error } = useLogin();
-  const queryClient = useQueryClient();
 
   const handleStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    resetError();
     setLogin({ ...login, [event.target.name]: event.target.value });
-  };
-
-  const resetError = () => {
-    const queryState = queryClient.getQueryState(MUTATION_KEYS.LOGIN);
-    if (queryState?.error)
-      queryClient.resetQueries({ queryKey: MUTATION_KEYS.LOGIN });
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -38,8 +28,8 @@ export default function Login() {
     mutate(login);
   };
 
-  const updateInputColorOnError = (type: string) => {
-    const emailErrors = error?.errors.filter((e) => e.message.includes(type));
+  const updateInputColorOnError = (type: "Email" | "Password") => {
+    const emailErrors = error?.errors?.filter((e) => e.message.includes(type));
     return !!emailErrors?.length;
   };
 

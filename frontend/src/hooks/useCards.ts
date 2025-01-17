@@ -8,9 +8,24 @@ type Card = {
 };
 
 export const useCards = () => {
-  return useQuery<Card[], unknown>({
+  return useQuery<Card[], { message: string }>({
     queryKey: QUERY_KEYS.CARDS,
-    queryFn: () => fetch(`${backendUrl}/api/cards`).then((res) => res.json()),
+    queryFn: async () => {
+      const response = await fetch(`${backendUrl}/api/cards`, {
+        method: "GET",
+        headers: {
+          Authorization: localStorage.getItem("token") ?? "",
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw error;
+      }
+
+      return response.json();
+    },
+
     refetchOnWindowFocus: false,
     staleTime: Infinity,
   });

@@ -12,7 +12,7 @@ const AnimatedOutlet = (): React.JSX.Element => {
 
   return (
     <div key={location.pathname}>
-      {["/login", "/register"].includes(location.pathname) ||
+      {["/login", "/register", "/error"].includes(location.pathname) ||
       !location.pathname ? (
         <Flex
           minHeight={"calc(100vh - 6px)"}

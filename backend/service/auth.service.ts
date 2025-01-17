@@ -1,10 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
-
 import { ZodError } from "zod";
 import { AuthRepository } from "../repository/auth.repository";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
+import { signJwt } from "../utils/jwt";
 import { loginSchema } from "../validation/auth.validation";
-const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 export class AuthService {
   private authRepository: AuthRepository;
@@ -16,8 +15,18 @@ export class AuthService {
   async login(req: Request, res: Response, next?: NextFunction) {
     try {
       const { email, password } = loginSchema.parse(req.body);
-      const user = await this.authRepository.login({ email, password });
-      return user;
+      const user = await this.authRepository.findUserByEmail(email);
+
+      if (!user || user.password !== password) {
+        throw new Error("Invalid email or password");
+      }
+      // Payload for the token
+      const payload = { id: user.id, email: user.email };
+
+      // Generate JWT
+      const token = await signJwt(payload);
+
+      return { payload, token };
     } catch (error) {
       if (error instanceof ZodError) {
         res.status(400).json({ errors: error.errors });

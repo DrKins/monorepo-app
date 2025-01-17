@@ -1,19 +1,11 @@
 import { User } from "../models/User";
 
-interface validatedData {
-  email: string;
-  password: string;
-}
-
 export class AuthRepository {
-  async login({ email, password }: validatedData) {
+  async findUserByEmail(email: string) {
     try {
       const user = await User.findOne({
-        where: { email, password },
+        where: { email },
       });
-      if (!user) {
-        throw new Error("Invalid username or password");
-      }
       return user;
     } catch (error) {
       throw error;

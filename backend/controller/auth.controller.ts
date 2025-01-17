@@ -9,8 +9,8 @@ export class AuthController {
   }
 
   async login(req: Request, res: Response) {
-    const user = await this.authService.login(req, res);
-    res.json(user);
+    const token = await this.authService.login(req, res);
+    res.json(token);
   }
 
   // async createCard(req: Request, res: Response) {

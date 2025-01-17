@@ -1,8 +1,24 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/db";
 
-export const User = sequelize.define(
-  "User",
+interface UserAttributes {
+  id: number;
+  email: string;
+  password: string;
+}
+
+interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+
+export class User
+  extends Model<UserAttributes, UserCreationAttributes>
+  implements UserAttributes
+{
+  public id!: number;
+  public email!: string;
+  public password!: string;
+}
+
+User.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -12,6 +28,7 @@ export const User = sequelize.define(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -19,6 +36,8 @@ export const User = sequelize.define(
     },
   },
   {
+    sequelize,
+    modelName: "User",
     tableName: "users",
     timestamps: false,
   },

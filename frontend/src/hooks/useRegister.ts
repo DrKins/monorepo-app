@@ -4,18 +4,23 @@ import { MUTATION_KEYS } from "../constants/queryKeys";
 import { ErrorResponse } from "../types/errorTypes";
 import { backendUrl } from "../utils/getBackendUrl";
 
-type LoginData = {
+type RegistrationData = {
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
-const loginRequest = async ({ email, password }: LoginData) => {
-  const response = await fetch(`${backendUrl}/api/login`, {
+const registrationRequest = async ({
+  email,
+  password,
+  confirmPassword,
+}: RegistrationData) => {
+  const response = await fetch(`${backendUrl}/api/registration`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, confirmPassword }),
   });
 
   if (!response.ok) {
@@ -26,17 +31,15 @@ const loginRequest = async ({ email, password }: LoginData) => {
   return response.json();
 };
 
-export const useLogin = () => {
+export const useRegistration = () => {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationKey: MUTATION_KEYS.LOGIN,
-    mutationFn: ({ email, password }: LoginData) =>
-      loginRequest({ email, password }),
-    onSuccess: (user) => {
-      localStorage.setItem("token", "Bearer " + user.token);
-      sessionStorage.setItem("user", JSON.stringify(user.payload.email));
-      navigate("/");
+    mutationKey: MUTATION_KEYS.REGISTRATION,
+    mutationFn: (data: RegistrationData) => registrationRequest(data),
+    onSuccess: (response) => {
+      alert(response.message);
+      navigate("/login");
     },
     onError: (error: ErrorResponse) => {
       console.error(error);

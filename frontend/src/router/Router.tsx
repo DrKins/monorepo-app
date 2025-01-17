@@ -7,7 +7,7 @@ import App from "../App";
 import ErrorPage from "../error/Error";
 import Home from "../home/Home";
 import Login from "../login/Login";
-import Register from "../register/Register";
+import Register from "../registration/Registration";
 import AnimatedLayout from "./AnimatedLayout";
 
 const router = createBrowserRouter(

@@ -9,24 +9,31 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { BiSolidLogInCircle } from "react-icons/bi";
-import { BsUnlockFill } from "react-icons/bs";
+import { GrUserNew } from "react-icons/gr";
+import { IoEnter } from "react-icons/io5";
 import { MdError } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { useLogin } from "../hooks/useLogin";
+import { useRegistration } from "../hooks/useRegister";
 import { updateInputColorOnError } from "../utils/updateColorOnError";
-export default function Login() {
-  const [login, setLogin] = useState({ email: "", password: "" });
+export default function Registration() {
+  const { mutate, isError, error } = useRegistration();
+  const [registrationForm, setRegistrationForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const navigate = useNavigate();
-  const { mutate, isError, error } = useLogin();
 
   const handleStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLogin({ ...login, [event.target.name]: event.target.value });
+    setRegistrationForm({
+      ...registrationForm,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutate(login);
+    mutate(registrationForm);
   };
 
   return (
@@ -34,10 +41,10 @@ export default function Login() {
       display={"flex"}
       gap={2}
       flexDirection={"column"}
+      alignItems={"center"}
       justifyContent={"center"}
       height={"100%"}
-      width={"100%"}
-      transition={"all ease-in-out 100ms"}>
+      width={"100%"}>
       <Box
         border={"2px"}
         borderColor={"blue.300"}
@@ -50,35 +57,27 @@ export default function Login() {
         paddingInline={12}
         paddingBlock={6}
         borderRadius={"md"}>
-        <Text
-          textAlign={isError ? "start" : "center"}
-          mt={isError ? 6 : 2}
-          display={{ base: "none", lg: "block" }}
-          color={"white"}
-          fontSize={"3xl"}
-          fontWeight={"light"}
-          alignSelf={"start"}
-          width={"40%"}>
-          <Icon
-            alignSelf={isError ? "start" : "center"}
-            mr={2}
-            color={"blue.200"}
-            as={BsUnlockFill}
-            boxSize={"30px"}
-          />
-          Login page
-        </Text>
         <Box>
+          <Text color={"white"} fontSize={"3xl"} fontWeight={"light"}>
+            <Icon
+              alignSelf={isError ? "start" : "center"}
+              color={"blue.200"}
+              as={GrUserNew}
+              boxSize={"30px"}
+              mt={8}
+              mr={2}
+            />
+            Registration form
+          </Text>
           <Box
             onSubmit={onSubmit}
             as="form"
             display={"flex"}
             flexDirection={{ base: "column", lg: "row" }}
-            alignItems={"center"}
             gap={5}
             width={"100%"}>
             <FormControl>
-              <FormLabel>Email address</FormLabel>
+              <FormLabel color={"white"}>Email Adress</FormLabel>
               <Input
                 name="email"
                 color={"white"}
@@ -93,10 +92,24 @@ export default function Login() {
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Password</FormLabel>
+              <FormLabel color={"white"}>Password</FormLabel>
               <Input
                 name="password"
-                type="password"
+                type="text"
+                width={"100%"}
+                isInvalid={updateInputColorOnError({
+                  type: "Password",
+                  error,
+                })}
+                errorBorderColor="red.300"
+                onChange={handleStateChange}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel color={"white"}>Confirm Password</FormLabel>
+              <Input
+                name="confirmPassword"
+                type="text"
                 width={"100%"}
                 isInvalid={updateInputColorOnError({
                   type: "Password",
@@ -113,32 +126,30 @@ export default function Login() {
               width={{ base: "100%", lg: "50%" }}
               color={"blue.500"}
               rightIcon={
-                <Icon
-                  color={"blue.500"}
-                  as={BiSolidLogInCircle}
-                  boxSize={"35px"}
-                />
+                <Icon color={"blue.500"} as={IoEnter} boxSize={"35px"} />
               }>
-              Login
+              Register
             </Button>
           </Box>
-          {isError && (
-            <Box mt={4} color={"red.100"}>
-              Something went wrong:
-              {error?.errors?.map((error) => (
-                <Box display={"flex"} gap={2}>
-                  <Icon color={"red.200"} as={MdError} boxSize={"25px"} />
-                  <Text color={"red.200"}>{error.message}</Text>
-                </Box>
-              ))}
-            </Box>
-          )}
+          <Box>
+            {isError && (
+              <Box mt={4} color={"red.100"}>
+                Something went wrong:
+                {error?.errors?.map((error) => (
+                  <Box display={"flex"} gap={2}>
+                    <Icon color={"red.200"} as={MdError} boxSize={"25px"} />
+                    <Text color={"red.200"}>{error.message}</Text>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
         </Box>
       </Box>
       <Text alignSelf={"flex-start"}>
-        Don't have an account?{" "}
-        <Link color={"blue.300"} onClick={() => navigate("/register")}>
-          Sign up
+        Already have an account?&nbsp;
+        <Link color={"blue.300"} onClick={() => navigate("/login")}>
+          Log in
         </Link>
       </Text>
     </Box>

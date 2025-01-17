@@ -13,18 +13,8 @@ export class AuthController {
     res.json(token);
   }
 
-  // async createCard(req: Request, res: Response) {
-  //   const task = await this.cardService.createCard(req, res);
-  //   res.json(task);
-  // }
-
-  // async deleteCard(req: Request, res: Response) {
-  //   const results = await this.cardService.deleteCard(req, res);
-  //   res.json(results);
-  // }
-
-  // async updateCard(req: Request, res: Response) {
-  //   const results = await this.cardService.updateCard(req, res);
-  //   res.json(results);
-  // }
+  async register(req: Request, res: Response) {
+    const response = await this.authService.register(req, res);
+    res.json(response);
+  }
 }

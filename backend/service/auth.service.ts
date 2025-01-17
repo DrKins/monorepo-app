@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 import { AuthRepository } from "../repository/auth.repository";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
 import { signJwt } from "../utils/jwt";
-import { loginSchema } from "../validation/auth.validation";
+import { loginSchema, registerSchema } from "../validation/auth.validation";
 
 export class AuthService {
   private authRepository: AuthRepository;
@@ -42,30 +42,34 @@ export class AuthService {
     }
   }
 
-  // async createCard(req: Request, res: Response, next?: NextFunction) {
-  //   try {
-  //     const task = await this.cardRepository.createCard(req);
-  //     return task;
-  //   } catch (error) {
-  //     res.status(500).json({ message: "Error creating task" });
-  //   }
-  // }
+  async register(req: Request, res: Response, next?: NextFunction) {
+    try {
+      const { email, password } = registerSchema.parse(req.body);
+      const userAlreadyExists = await this.authRepository.findUserByEmail(
+        email,
+      );
 
-  // async deleteCard(req: Request, res: Response, next?: NextFunction) {
-  //   try {
-  //     const task = await this.cardRepository.deleteCard(req);
-  //     return task;
-  //   } catch (error) {
-  //     res.status(500).json({ message: "Error deleting task" });
-  //   }
-  // }
+      if (userAlreadyExists) {
+        throw new Error("Email address is already in use");
+      }
 
-  // async updateCard(req: Request, res: Response, next?: NextFunction) {
-  //   try {
-  //     const task = await this.cardRepository.updateCard(req);
-  //     return task;
-  //   } catch (error) {
-  //     res.send(500).json({ message: "Error updating task" });
-  //   }
-  // }
+      await this.authRepository.createUser({
+        email,
+        password,
+      });
+      return "User created successfully";
+    } catch (error) {
+      if (error instanceof ZodError) {
+        res.status(400).json({ errors: error.errors });
+        return;
+      }
+
+      if (error instanceof Error) {
+        res.status(400).json(generateErrorResponse(error.message));
+        return;
+      }
+
+      res.send(500).json({ message: "Internal server error" });
+    }
+  }
 }

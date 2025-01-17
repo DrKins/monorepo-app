@@ -28,9 +28,6 @@ router.put("/card/:id", (req, res) => cardController.updateCard(req, res));
 
 // Auth routes
 router.post("/login", (req, res) => authController.login(req, res));
-// Uncomment and modify if needed
-// router.post("/register", (req, res) => authController.register(req, res));
-// router.delete("/logout/:id", (req, res) => authController.logout(req, res));
-// router.put("/edit/:id", (req, res) => authController.edit(req, res));
+router.post("/registration", (req, res) => authController.register(req, res));
 
 export { router };

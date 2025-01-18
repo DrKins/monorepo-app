@@ -13,7 +13,16 @@ const Card = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    userEmail: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "email",
+      },
+    },
   },
+
   {
     tableName: "cards",
     timestamps: false,

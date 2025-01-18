@@ -1,6 +1,10 @@
 import cors from "cors";
 import express from "express";
+import { seedDatabase } from "./config/seed";
 import { router } from "./routes";
+
+//create fresh tables and insert intital data into db.
+seedDatabase();
 
 const app = express();
 app.use(cors());

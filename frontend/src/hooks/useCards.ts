@@ -5,6 +5,7 @@ import { backendUrl } from "../utils/getBackendUrl";
 type Card = {
   id: number;
   content: string;
+  userEmail: string;
 };
 
 export const useCards = () => {

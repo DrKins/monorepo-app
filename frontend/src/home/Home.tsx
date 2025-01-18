@@ -5,7 +5,6 @@ import {
   Icon,
   Skeleton,
   SkeletonCircle,
-  SkeletonText,
   Text,
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -39,13 +38,27 @@ export default function Home() {
       <AnimatePresence>
         <MotionBox layout display={"flex"} flexDirection={"column"} mb={5}>
           <Flex gap={5}>
-            <Skeleton width={300} height={30} />
-            <Skeleton width={100} height={30} />
-            <Skeleton width={100} height={30} />
+            <Skeleton
+              width={{ base: "40%", md: "30%", lg: "20%" }}
+              height={30}
+            />
+            <Skeleton
+              width={{ base: "20%", md: "20%", lg: "10%" }}
+              height={30}
+            />
+            <Skeleton
+              width={{ base: "20%", md: "20%", lg: "10%" }}
+              height={30}
+            />
           </Flex>
         </MotionBox>
-        <Box display={"flex"} justifyContent={"center"} width={"100%"} gap={5}>
-          {Array.from({ length: 5 }).map((_, index) => (
+        <Box
+          display={"flex"}
+          justifyContent={"flex-start"}
+          maxWidth={"100%"}
+          flexWrap={"wrap"}
+          gap={5}>
+          {Array.from({ length: 8 }).map((_, index) => (
             <Flex
               width={300}
               flexDirection={"column"}
@@ -95,52 +108,24 @@ export default function Home() {
           gap={5}
           flexWrap={"wrap"}
           mt={5}>
-          {data ? (
-            <AnimatePresence>
-              {data?.map((card, index) => (
-                <motion.div
-                  layout
-                  key={card.id}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{
-                    duration: 0.15,
-                    delay: index * 0.15,
-                    ease: "easeInOut",
-                  }}
-                  style={{ flex: 1 }}>
-                  <CardQuote content={card.content} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          ) : (
-            <Box
-              display={"flex"}
-              justifyContent={"center"}
-              width={"100%"}
-              gap={5}>
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Box
-                  display={"flex"}
-                  flexDirection={"row"}
-                  rounded={"lg"}
-                  padding="6"
-                  boxShadow="lg"
-                  bg="white"
-                  width={300}
-                  key={index}>
-                  <SkeletonCircle size="10" />
-                  <SkeletonText
-                    mt="4"
-                    noOfLines={4}
-                    spacing="4"
-                    skeletonHeight="2"
-                  />
-                </Box>
-              ))}
-            </Box>
-          )}
+          <AnimatePresence>
+            {data?.map((card, index) => (
+              <motion.div
+                layout
+                key={card.id}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{
+                  duration: 0.15,
+                  delay: index * 0.15,
+                  ease: "easeInOut",
+                }}
+                style={{ flex: 1 }}>
+                <CardQuote content={card.content} userEmail={card.userEmail} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </MotionBox>
         {data && data.length > 50 && (
           <AnimatePresence>

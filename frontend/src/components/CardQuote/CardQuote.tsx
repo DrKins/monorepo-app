@@ -16,16 +16,22 @@ import {
   BsHandThumbsUpFill,
   BsThreeDotsVertical,
 } from "react-icons/bs";
+import { getColorFromEmail } from "../../utils/getColorFromEmail";
 
-export default function CardQuote({ content }: { content: string }) {
+type CardQuoteProps = {
+  content: string;
+  userEmail: string;
+};
+
+export default function CardQuote({ content, userEmail }: CardQuoteProps) {
   return (
-    <Card flex={1}>
+    <Card flex={1} height={"100%"} background={"whiteAlpha.900"}>
       <CardBody display={"flex"} gap={5}>
         <Avatar
           borderWidth={"2px"}
-          borderColor={"red.200"}
+          borderColor={getColorFromEmail(userEmail)}
           size="sm"
-          name="NN"
+          name={userEmail}
         />
         <Text>{content}</Text>
       </CardBody>

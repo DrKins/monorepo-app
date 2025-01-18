@@ -18,7 +18,7 @@ import { updateInputColorOnError } from "../utils/updateColorOnError";
 export default function Login() {
   const [login, setLogin] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const { mutate, isError, error } = useLogin();
+  const { mutate, isError, error, isPending } = useLogin();
 
   const handleStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLogin({ ...login, [event.target.name]: event.target.value });
@@ -107,6 +107,7 @@ export default function Login() {
               />
             </FormControl>
             <Button
+              isLoading={isPending}
               alignSelf={isError ? "start" : "center"}
               mt={8}
               type="submit"

@@ -1,6 +1,11 @@
 import type { Request } from "express";
 import { Card } from "../models/Card";
 
+type CardParams = {
+  content: string;
+  userEmail: string;
+};
+
 export class CardRepository {
   async getCards(req: Request) {
     try {
@@ -12,9 +17,9 @@ export class CardRepository {
     }
   }
 
-  async createCard(req: Request) {
+  async createCard(cardParam: CardParams) {
     try {
-      const card = await Card.create(req.body);
+      const card = await Card.create(cardParam);
       const results = await card.save();
       return results;
     } catch (error) {

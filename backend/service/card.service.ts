@@ -1,5 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
+import { ZodError } from "zod";
 import { CardRepository } from "../repository/card.repository";
+import { generateErrorResponse } from "../utils/generateErrorResponse";
+import { cardSchema } from "../validation/card.validation";
 
 export class CardService {
   private cardRepository: CardRepository;
@@ -13,16 +16,28 @@ export class CardService {
       const tasks = await this.cardRepository.getCards(req);
       return tasks;
     } catch (error) {
-      res.status(500).json({ message: "Error fetching tasks" });
+      if (error instanceof Error) {
+        res.status(500).json(generateErrorResponse(error.message, true));
+        return;
+      }
     }
   }
 
   async createCard(req: Request, res: Response, next?: NextFunction) {
     try {
-      const task = await this.cardRepository.createCard(req);
+      const validatedData = cardSchema.parse(req.body);
+      const task = await this.cardRepository.createCard(validatedData);
       return task;
     } catch (error) {
-      res.status(500).json({ message: "Error creating task" });
+      if (error instanceof ZodError) {
+        res.status(422).json(generateErrorResponse(error.errors));
+        return;
+      }
+
+      if (error instanceof Error) {
+        res.status(500).json(generateErrorResponse(error.message, true));
+        return;
+      }
     }
   }
 

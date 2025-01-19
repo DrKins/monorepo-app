@@ -50,26 +50,26 @@ export class AuthService {
       );
 
       if (userAlreadyExists) {
-        throw new Error("Email address is already in use");
+        throw new Error("User already exists");
       }
 
       await this.authRepository.createUser({
         email,
         password,
       });
-      return "User created successfully";
+
+      res.status(201).json({ message: "User created successfully" });
+      return;
     } catch (error) {
       if (error instanceof ZodError) {
-        res.status(400).json({ errors: error.errors });
+        res.status(422).json(generateErrorResponse(error.errors));
         return;
       }
 
       if (error instanceof Error) {
-        res.status(400).json(generateErrorResponse(error.message));
+        res.status(500).json(generateErrorResponse(error.message, true));
         return;
       }
-
-      res.send(500).json({ message: "Internal server error" });
     }
   }
 }

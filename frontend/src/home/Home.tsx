@@ -21,7 +21,7 @@ const MotionBox = motion(Box);
 export default function Home() {
   const { userEmail, setUserEmail } = useUserContext();
   const [isCreateCardOpen, setIsCreateCardOpen] = useState(false);
-  const { data, isError, isLoading, isRefetching } = useCards();
+  const { data, isError, isLoading } = useCards();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Home() {
     navigate("/error");
   }
 
-  if (isLoading || isRefetching) {
+  if (isLoading) {
     return (
       <AnimatePresence>
         <MotionBox layout display={"flex"} flexDirection={"column"} mb={5}>

@@ -6,7 +6,6 @@ import { backendUrl } from "../utils/getBackendUrl";
 
 type CreateCardData = {
   content: string;
-  userEmail: string;
 };
 
 const createCardRequest = async (data: CreateCardData) => {
@@ -14,6 +13,7 @@ const createCardRequest = async (data: CreateCardData) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token") ?? "",
     },
     body: JSON.stringify(data),
   });
@@ -32,8 +32,7 @@ export const useCreateCard = () => {
   return useMutation({
     mutationKey: MUTATION_KEYS.CREATE_CARD,
     mutationFn: (data: CreateCardData) => createCardRequest(data),
-    onSuccess: (response: SuccessMessageType) => {
-      console.log(response);
+    onSuccess: (_response: SuccessMessageType) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CARDS });
     },
     onError: (error: ErrorResponse) => {

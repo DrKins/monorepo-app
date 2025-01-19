@@ -32,7 +32,6 @@ export default function CreateCardQuote({
   const { mutate, isPending, isSuccess } = useCreateCard();
   const [createCardForm, setCreateCardForm] = useState({
     content: "",
-    userEmail: userEmail ?? "",
   });
   function handleClose() {
     setIsCreateCardOpen(false);

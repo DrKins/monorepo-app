@@ -37,8 +37,7 @@ export const useRegistration = () => {
   return useMutation({
     mutationKey: MUTATION_KEYS.REGISTRATION,
     mutationFn: (data: RegistrationData) => registrationRequest(data),
-    onSuccess: (response) => {
-      alert(response.message);
+    onSuccess: (_response) => {
       navigate("/login");
     },
     onError: (error: ErrorResponse) => {

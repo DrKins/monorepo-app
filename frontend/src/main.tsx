@@ -8,6 +8,7 @@ import Router from "./router/Router";
 import theme from "./theme";
 
 const queryClient = new QueryClient();
+if (localStorage.getItem("token")) localStorage.removeItem("token");
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

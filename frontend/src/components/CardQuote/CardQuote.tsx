@@ -9,7 +9,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Text,
 } from "@chakra-ui/react";
 import {
   BsHandThumbsDownFill,
@@ -17,6 +16,7 @@ import {
   BsThreeDotsVertical,
 } from "react-icons/bs";
 import { getColorFromEmail } from "../../utils/getColorFromEmail";
+import { HandleContextComponent } from "../ViewMoreText/ViewMoreText";
 
 type CardQuoteProps = {
   content: string;
@@ -25,7 +25,7 @@ type CardQuoteProps = {
 
 export default function CardQuote({ content, email }: CardQuoteProps) {
   return (
-    <Card flex={1} height={"100%"} background={"whiteAlpha.900"}>
+    <Card flex={1} height={"100%"} background={"whiteAlpha.900"} maxWidth={400}>
       <CardBody display={"flex"} gap={5}>
         <Avatar
           borderWidth={"2px"}
@@ -33,7 +33,7 @@ export default function CardQuote({ content, email }: CardQuoteProps) {
           size="sm"
           name={email}
         />
-        <Text>{content}</Text>
+        <HandleContextComponent text={content} />
       </CardBody>
       <CardFooter display={"flex"} gap={5} justifyContent={"flex-end"}>
         <Button background={"transparent"} shadow={"sm"} disabled>

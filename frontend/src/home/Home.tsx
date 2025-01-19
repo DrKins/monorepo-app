@@ -13,27 +13,29 @@ import { useNavigate } from "react-router-dom";
 import CardQuote from "../components/CardQuote/CardQuote";
 import CreateCardQuote from "../components/CreateCardQuote/CreateCardQuote";
 import HeaderControlls from "../components/HeaderControlls/HeaderControlls";
+import { useUserContext } from "../context/UserContext";
 import { useCards } from "../hooks/useCards";
 
 const MotionBox = motion(Box);
 
 export default function Home() {
+  const { userEmail, setUserEmail } = useUserContext();
   const [isCreateCardOpen, setIsCreateCardOpen] = useState(false);
-  const { data, isError, isLoading } = useCards();
+  const { data, isError, isLoading, isRefetching } = useCards();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!sessionStorage.getItem("user")) {
+    if (!userEmail) {
       navigate("/login");
     }
   }, [navigate]);
 
   if (isError) {
-    sessionStorage.removeItem("user");
+    setUserEmail(null);
     navigate("/error");
   }
 
-  if (isLoading) {
+  if (isLoading || isRefetching) {
     return (
       <AnimatePresence>
         <MotionBox layout display={"flex"} flexDirection={"column"} mb={5}>
@@ -58,7 +60,7 @@ export default function Home() {
           maxWidth={"100%"}
           flexWrap={"wrap"}
           gap={5}>
-          {Array.from({ length: 8 }).map((_, index) => (
+          {Array.from({ length: 3 }).map((_, index) => (
             <Flex
               width={300}
               flexDirection={"column"}

@@ -14,9 +14,9 @@ const showEdit = false;
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { userEmail } = useUserContext();
+  const { userEmail, setUserEmail } = useUserContext();
   const handleLogOut = () => {
-    sessionStorage.removeItem("user");
+    setUserEmail(null);
     navigate("/login");
   };
 

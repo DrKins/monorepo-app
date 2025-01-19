@@ -17,6 +17,15 @@ export class AuthRepository {
     }
   }
 
+  async findUserById(id: number) {
+    try {
+      const user = await User.findByPk(id);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createUser(user: UserParams) {
     try {
       const createdUser = await User.create(user);

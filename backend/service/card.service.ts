@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { CardRepository } from "../repository/card.repository";
+import { authRepository } from "../routes";
 import { CustomRequest } from "../types/Request";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
 import { cardSchema } from "../validation/card.validation";
@@ -15,7 +16,16 @@ export class CardService {
   async getCards(req: Request, res: Response, next?: NextFunction) {
     try {
       const tasks = await this.cardRepository.getCards();
-      return tasks;
+      const tasksWithUserEmail = await Promise.all(
+        tasks.map(async ({ dataValues }) => {
+          const user = await authRepository.findUserById(dataValues.userId);
+          return {
+            ...dataValues,
+            userEmail: user?.email,
+          };
+        }),
+      );
+      return tasksWithUserEmail;
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json(generateErrorResponse(error.message, true));
@@ -30,7 +40,7 @@ export class CardService {
 
       const task = await this.cardRepository.createCard({
         ...validatedData,
-        userEmail: req.user.email,
+        userId: req.user.id,
       });
       return task;
     } catch (error) {

@@ -43,7 +43,7 @@ export const verifyJwt = async (
       secretKey,
     );
 
-    const user = await authRepository.findUserByEmail(payload.email);
+    const user = await authRepository.findUserById(payload.id);
 
     req.user = user?.dataValues ?? payload;
 

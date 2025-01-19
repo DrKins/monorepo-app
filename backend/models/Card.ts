@@ -1,8 +1,24 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../config/db";
 
-const Card = sequelize.define(
-  "Card",
+interface CardAttributes {
+  id: number;
+  content: string;
+  userId: number;
+}
+
+interface CardCreationAttributes extends Optional<CardAttributes, "id"> {}
+
+export class Card
+  extends Model<CardAttributes, CardCreationAttributes>
+  implements CardAttributes
+{
+  declare id: number;
+  declare content: string;
+  declare userId: number;
+}
+
+Card.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -13,20 +29,19 @@ const Card = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    userEmail: {
-      type: DataTypes.STRING,
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: "users",
-        key: "email",
+        key: "id",
       },
     },
   },
-
   {
+    sequelize,
+    modelName: "Card",
     tableName: "cards",
-    timestamps: true,
+    timestamps: false,
   },
 );
-
-export { Card };

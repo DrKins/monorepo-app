@@ -3,7 +3,7 @@ import { Card } from "../models/Card";
 
 type CardParams = {
   content: string;
-  userEmail: string;
+  userId: number;
 };
 
 export class CardRepository {

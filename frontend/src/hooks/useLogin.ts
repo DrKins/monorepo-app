@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { MUTATION_KEYS } from "../constants/queryKeys";
+import { useUserContext } from "../context/UserContext";
 import { ErrorResponse } from "../types/errorTypes";
 import { backendUrl } from "../utils/getBackendUrl";
 
@@ -9,7 +10,17 @@ type LoginData = {
   password: string;
 };
 
-const loginRequest = async ({ email, password }: LoginData) => {
+type LoginResponse = {
+  token: string;
+  payload: {
+    email: string;
+  };
+};
+
+const loginRequest = async ({
+  email,
+  password,
+}: LoginData): Promise<LoginResponse> => {
   const response = await fetch(`${backendUrl}/api/login`, {
     method: "POST",
     headers: {
@@ -28,6 +39,7 @@ const loginRequest = async ({ email, password }: LoginData) => {
 
 export const useLogin = () => {
   const navigate = useNavigate();
+  const { setUserEmail } = useUserContext();
 
   return useMutation({
     mutationKey: MUTATION_KEYS.LOGIN,
@@ -35,7 +47,7 @@ export const useLogin = () => {
       loginRequest({ email, password }),
     onSuccess: (user) => {
       localStorage.setItem("token", "Bearer " + user.token);
-      sessionStorage.setItem("user", JSON.stringify(user.payload.email));
+      setUserEmail(user.payload.email);
       navigate("/");
     },
     onError: (error: ErrorResponse) => {

@@ -122,7 +122,7 @@ export default function Home() {
                   ease: "easeInOut",
                 }}
                 style={{ flex: 1 }}>
-                <CardQuote content={card.content} userEmail={card.userEmail} />
+                <CardQuote content={card.content} email={card.userEmail} />
               </motion.div>
             ))}
           </AnimatePresence>

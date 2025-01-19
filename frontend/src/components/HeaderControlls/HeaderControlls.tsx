@@ -32,7 +32,6 @@ export default function HeaderControlls({
       </Select>
 
       <Button
-        disabled
         background={"green.300"}
         gap={2}
         onClick={() => handleOpen(!isOpen)}>

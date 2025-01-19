@@ -20,18 +20,18 @@ import { getColorFromEmail } from "../../utils/getColorFromEmail";
 
 type CardQuoteProps = {
   content: string;
-  userEmail: string;
+  email: string;
 };
 
-export default function CardQuote({ content, userEmail }: CardQuoteProps) {
+export default function CardQuote({ content, email }: CardQuoteProps) {
   return (
     <Card flex={1} height={"100%"} background={"whiteAlpha.900"}>
       <CardBody display={"flex"} gap={5}>
         <Avatar
           borderWidth={"2px"}
-          borderColor={getColorFromEmail(userEmail)}
+          borderColor={getColorFromEmail(email)}
           size="sm"
-          name={userEmail}
+          name={email}
         />
         <Text>{content}</Text>
       </CardBody>

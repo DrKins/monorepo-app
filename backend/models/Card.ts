@@ -25,7 +25,7 @@ const Card = sequelize.define(
 
   {
     tableName: "cards",
-    timestamps: false,
+    timestamps: true,
   },
 );
 

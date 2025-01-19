@@ -1,6 +1,7 @@
 import { createSecretKey } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import { JWTPayload, jwtVerify, SignJWT } from "jose";
+import { authRepository } from "../routes";
 
 interface TokenPayloadInterface extends JWTPayload {
   id: number;
@@ -16,7 +17,7 @@ export const signJwt = async (payload: TokenPayloadInterface) =>
   await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(process.env.JWT_EXPIRATION_TIME ?? "1m")
+    .setExpirationTime(process.env.JWT_EXPIRATION_TIME ?? "15m")
     .sign(secretKey);
 
 interface CustomRequest extends Request {
@@ -37,9 +38,14 @@ export const verifyJwt = async (
 
     const token = authHeader.split(" ")[1];
 
-    const { payload } = await jwtVerify(token, secretKey);
+    const { payload } = await jwtVerify<TokenPayloadInterface>(
+      token,
+      secretKey,
+    );
 
-    req.user = payload;
+    const user = await authRepository.findUserByEmail(payload.email);
+
+    req.user = user?.dataValues ?? payload;
 
     next();
   } catch (err) {

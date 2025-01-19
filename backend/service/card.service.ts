@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { CardRepository } from "../repository/card.repository";
+import { CustomRequest } from "../types/Request";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
 import { cardSchema } from "../validation/card.validation";
 
@@ -13,7 +14,7 @@ export class CardService {
 
   async getCards(req: Request, res: Response, next?: NextFunction) {
     try {
-      const tasks = await this.cardRepository.getCards(req);
+      const tasks = await this.cardRepository.getCards();
       return tasks;
     } catch (error) {
       if (error instanceof Error) {
@@ -23,10 +24,14 @@ export class CardService {
     }
   }
 
-  async createCard(req: Request, res: Response, next?: NextFunction) {
+  async createCard(req: CustomRequest, res: Response, next?: NextFunction) {
     try {
       const validatedData = cardSchema.parse(req.body);
-      const task = await this.cardRepository.createCard(validatedData);
+
+      const task = await this.cardRepository.createCard({
+        ...validatedData,
+        userEmail: req.user.email,
+      });
       return task;
     } catch (error) {
       if (error instanceof ZodError) {

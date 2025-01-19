@@ -7,7 +7,7 @@ type CardParams = {
 };
 
 export class CardRepository {
-  async getCards(req: Request) {
+  async getCards() {
     try {
       const cards = await Card.findAll();
       return cards;

@@ -5,6 +5,7 @@ import { AuthRepository } from "../repository/auth.repository.js";
 import { CardRepository } from "../repository/card.repository.js";
 import { AuthService } from "../service/auth.service.js";
 import { CardService } from "../service/card.service.js";
+import { CustomRequest } from "../types/Request.js";
 import { verifyJwt } from "../utils/jwt.js";
 
 const router = express.Router();
@@ -14,7 +15,7 @@ const cardRepository = new CardRepository();
 const cardService = new CardService(cardRepository);
 const cardController = new CardController(cardService);
 
-const authRepository = new AuthRepository();
+export const authRepository = new AuthRepository();
 const authService = new AuthService(authRepository);
 const authController = new AuthController(authService);
 
@@ -22,7 +23,9 @@ const authController = new AuthController(authService);
 router.get("/cards", verifyJwt, (req, res) =>
   cardController.getCards(req, res),
 );
-router.post("/card", (req, res) => cardController.createCard(req, res));
+router.post("/card", verifyJwt, (req, res) =>
+  cardController.createCard(req as unknown as CustomRequest, res),
+);
 router.delete("/card/:id", (req, res) => cardController.deleteCard(req, res));
 router.put("/card/:id", (req, res) => cardController.updateCard(req, res));
 

@@ -20,12 +20,8 @@ export const signJwt = async (payload: TokenPayloadInterface) =>
     .setExpirationTime(process.env.JWT_EXPIRATION_TIME ?? "15m")
     .sign(secretKey);
 
-interface CustomRequest extends Request {
-  user?: Record<string, any>;
-}
-
 export const verifyJwt = async (
-  req: CustomRequest,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {

@@ -5,9 +5,15 @@ interface CardAttributes {
   id: number;
   content: string;
   userId: number;
+  likedByUserIds: string;
+  dislikedByUserIds: string;
 }
 
-interface CardCreationAttributes extends Optional<CardAttributes, "id"> {}
+interface CardCreationAttributes
+  extends Optional<
+    CardAttributes,
+    "id" | "likedByUserIds" | "dislikedByUserIds"
+  > {}
 
 export class Card
   extends Model<CardAttributes, CardCreationAttributes>
@@ -16,6 +22,8 @@ export class Card
   declare id: number;
   declare content: string;
   declare userId: number;
+  declare likedByUserIds: string;
+  declare dislikedByUserIds: string;
 }
 
 Card.init(
@@ -36,6 +44,14 @@ Card.init(
         model: "users",
         key: "id",
       },
+    },
+    likedByUserIds: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    dislikedByUserIds: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

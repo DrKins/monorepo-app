@@ -34,7 +34,7 @@ export class AuthService {
       }
 
       if (error instanceof Error) {
-        res.status(400).json(generateErrorResponse(error.message));
+        res.status(400).json(generateErrorResponse(error.message, true));
         return;
       }
 

@@ -13,6 +13,7 @@ type LoginData = {
 type LoginResponse = {
   token: string;
   payload: {
+    id: number;
     email: string;
   };
 };
@@ -39,7 +40,7 @@ const loginRequest = async ({
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const { setUserEmail } = useUserContext();
+  const { setUser } = useUserContext();
 
   return useMutation({
     mutationKey: MUTATION_KEYS.LOGIN,
@@ -47,7 +48,7 @@ export const useLogin = () => {
       loginRequest({ email, password }),
     onSuccess: (user) => {
       localStorage.setItem("token", "Bearer " + user.token);
-      setUserEmail(user.payload.email);
+      setUser(user.payload);
       navigate("/");
     },
     onError: (error: ErrorResponse) => {

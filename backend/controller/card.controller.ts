@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { CardService } from "../service/card.service";
-import { CustomRequest } from "../types/Request";
 
 export class CardController {
   private cardService: CardService;
@@ -14,7 +13,12 @@ export class CardController {
     res.json(tasks);
   }
 
-  async createCard(req: CustomRequest, res: Response) {
+  async addReaction(req: Request, res: Response) {
+    const task = await this.cardService.addReaction(req, res);
+    res.json(task);
+  }
+
+  async createCard(req: Request, res: Response) {
     const task = await this.cardService.createCard(req, res);
     res.json(task);
   }

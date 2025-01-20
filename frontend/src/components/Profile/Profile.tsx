@@ -14,13 +14,13 @@ const showEdit = false;
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { userEmail, setUserEmail } = useUserContext();
+  const { user, setUser } = useUserContext();
   const handleLogOut = () => {
-    setUserEmail(null);
+    setUser(null);
     navigate("/login");
   };
 
-  if (!userEmail) {
+  if (!user?.email) {
     return null;
   }
 
@@ -31,9 +31,9 @@ export default function Profile() {
       gap={2}
       alignItems={"center"}>
       <Menu>
-        <Text>{userEmail}</Text>
+        <Text>{user.email}</Text>
         <MenuButton
-          disabled={!userEmail}
+          disabled={!user.email}
           padding={0}
           margin={0}
           display={"block"}
@@ -45,7 +45,7 @@ export default function Profile() {
               borderWidth={"2px"}
               borderColor={"green.200"}
               size="sm"
-              name={userEmail}
+              name={user.email}
             />
           }
         />

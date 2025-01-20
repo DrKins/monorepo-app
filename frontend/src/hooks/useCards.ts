@@ -1,15 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../constants/queryKeys";
+import { SuccessResponseCardType } from "../types/successTypes";
 import { backendUrl } from "../utils/getBackendUrl";
 
-type Card = {
-  id: number;
-  content: string;
-  userEmail: string;
-};
-
 export const useCards = () => {
-  return useQuery<Card[], { message: string }>({
+  return useQuery<SuccessResponseCardType[], { message: string }>({
     queryKey: QUERY_KEYS.CARDS,
     queryFn: async () => {
       const response = await fetch(`${backendUrl}/api/cards`, {

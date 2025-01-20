@@ -28,7 +28,7 @@ export default function CreateCardQuote({
   isCreateCardOpen,
   setIsCreateCardOpen,
 }: CreateCardQuoteProps) {
-  const { userEmail } = useUserContext();
+  const { user } = useUserContext();
   const { mutate, isPending, isSuccess } = useCreateCard();
   const [createCardForm, setCreateCardForm] = useState({
     content: "",
@@ -62,7 +62,7 @@ export default function CreateCardQuote({
           transition={{ duration: 0.35, ease: "easeInOut" }}
           maxWidth={"450px"}>
           <CardBody display={"flex"} gap={5}>
-            <Avatar name={userEmail ?? ""} size={"sm"} />
+            <Avatar name={user?.email ?? ""} size={"sm"} />
 
             <Flex flexDirection={"column"} gap={2} width={"100%"}>
               <Textarea

@@ -4,6 +4,7 @@
     "module": "CommonJS", // Update this line
     "rootDir": "./",
     "outDir": "./dist",
+    "typeRoots": ["./types"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

@@ -19,19 +19,19 @@ import { useCards } from "../hooks/useCards";
 const MotionBox = motion(Box);
 
 export default function Home() {
-  const { userEmail, setUserEmail } = useUserContext();
+  const { user, setUser } = useUserContext();
   const [isCreateCardOpen, setIsCreateCardOpen] = useState(false);
   const { data, isError, isLoading } = useCards();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!userEmail) {
+    if (!user?.email) {
       navigate("/login");
     }
   }, [navigate]);
 
   if (isError) {
-    setUserEmail(null);
+    setUser(null);
     navigate("/error");
   }
 
@@ -124,7 +124,7 @@ export default function Home() {
                   ease: "easeInOut",
                 }}
                 style={{ flex: 1 }}>
-                <CardQuote content={card.content} email={card.userEmail} />
+                <CardQuote info={card} />
               </motion.div>
             ))}
           </AnimatePresence>

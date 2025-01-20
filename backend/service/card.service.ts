@@ -1,8 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { CardRepository } from "../repository/card.repository";
-import { authRepository } from "../routes";
-import { CustomRequest } from "../types/Request";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
 import { cardSchema } from "../validation/card.validation";
 
@@ -15,17 +13,18 @@ export class CardService {
 
   async getCards(req: Request, res: Response, next?: NextFunction) {
     try {
-      const tasks = await this.cardRepository.getCards();
-      const tasksWithUserEmail = await Promise.all(
-        tasks.map(async ({ dataValues }) => {
-          const user = await authRepository.findUserById(dataValues.userId);
-          return {
-            ...dataValues,
-            userEmail: user?.email,
-          };
-        }),
-      );
-      return tasksWithUserEmail;
+      const cards = await this.cardRepository.getCards();
+      const formattedCards = cards.map((card) => ({
+        ...card.toJSON(),
+        likedByUserIds: card.likedByUserIds
+          ? card.likedByUserIds.split(",").map((id) => parseInt(id, 10))
+          : [],
+        dislikedByUserIds: card.dislikedByUserIds
+          ? card.dislikedByUserIds.split(",").map((id) => parseInt(id, 10))
+          : [],
+      }));
+
+      return formattedCards;
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json(generateErrorResponse(error.message, true));
@@ -34,13 +33,34 @@ export class CardService {
     }
   }
 
-  async createCard(req: CustomRequest, res: Response, next?: NextFunction) {
+  async addReaction(req: Request, res: Response, next?: NextFunction) {
+    try {
+      if (req.body) {
+        const task = await this.cardRepository.addReaction({
+          userId: req?.user?.id,
+          cardId: parseInt(req.params.id),
+          type: req.body.type,
+        });
+        return task;
+      } else {
+        res.status(400).json({ message: "Missing request body" });
+        return;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json(generateErrorResponse(error.message, true));
+        return;
+      }
+    }
+  }
+
+  async createCard(req: Request, res: Response, next?: NextFunction) {
     try {
       const validatedData = cardSchema.parse(req.body);
 
       const task = await this.cardRepository.createCard({
         ...validatedData,
-        userId: req.user.id,
+        userId: req?.user?.id,
       });
       return task;
     } catch (error) {

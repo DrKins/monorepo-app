@@ -15,15 +15,46 @@ import {
   BsHandThumbsUpFill,
   BsThreeDotsVertical,
 } from "react-icons/bs";
+import { useUserContext } from "../../context/UserContext";
+import { useReaction } from "../../hooks/useReaction";
+import { SuccessResponseCardType } from "../../types/successTypes";
 import { getColorFromEmail } from "../../utils/getColorFromEmail";
 import { HandleContextComponent } from "../ViewMoreText/ViewMoreText";
 
-type CardQuoteProps = {
-  content: string;
-  email: string;
+const Interactions = {
+  like: "liked",
+  dislike: "disliked",
 };
 
-export default function CardQuote({ content, email }: CardQuoteProps) {
+type CardQuoteProps = {
+  info: SuccessResponseCardType;
+};
+
+export default function CardQuote({
+  info: {
+    content,
+    owner: { email },
+    id,
+    likedByUserIds,
+    dislikedByUserIds,
+  },
+}: CardQuoteProps) {
+  const { mutate, isPending } = useReaction();
+  const { user } = useUserContext();
+  const handleReaction = (type: "like" | "dislike") => {
+    mutate({ type, id });
+  };
+
+  const checkInteractions = (type: "like" | "dislike") => {
+    if (!user) return;
+    if (type === "like" && likedByUserIds?.includes(user.id)) {
+      return Interactions.like;
+    } else if (type === "dislike" && dislikedByUserIds?.includes(user.id)) {
+      return Interactions.dislike;
+    }
+    return "";
+  };
+
   return (
     <Card flex={1} height={"100%"} background={"whiteAlpha.900"} maxWidth={400}>
       <CardBody display={"flex"} gap={5}>
@@ -36,13 +67,41 @@ export default function CardQuote({ content, email }: CardQuoteProps) {
         <HandleContextComponent text={content} />
       </CardBody>
       <CardFooter display={"flex"} gap={5} justifyContent={"flex-end"}>
-        <Button background={"transparent"} shadow={"sm"} disabled>
+        <Button
+          _hover={{
+            bg:
+              checkInteractions("like") === Interactions.like
+                ? "green.100"
+                : "green.200",
+          }}
+          isLoading={isPending}
+          background={
+            checkInteractions("like") === Interactions.like
+              ? "green.100"
+              : "transparent"
+          }
+          shadow={"sm"}
+          onClick={() => handleReaction("like")}>
           <Icon as={BsHandThumbsUpFill} color={"green.300"} />
-          {Math.round(Math.random() * 10)}
+          {likedByUserIds?.length ?? 0}
         </Button>
-        <Button background={"transparent"} shadow={"sm"} disabled>
-          <Icon as={BsHandThumbsDownFill} color={"gray"} />
-          {Math.round(Math.random() * 1)}
+        <Button
+          _hover={{
+            bg:
+              checkInteractions("dislike") === Interactions.dislike
+                ? "red.100"
+                : "red.200",
+          }}
+          isLoading={isPending}
+          background={
+            checkInteractions("dislike") === Interactions.dislike
+              ? "red.100"
+              : "transparent"
+          }
+          shadow={"sm"}
+          onClick={() => handleReaction("dislike")}>
+          <Icon as={BsHandThumbsDownFill} color={"red.300"} />
+          {dislikedByUserIds?.length ?? 0}
         </Button>
         <Menu>
           <MenuButton

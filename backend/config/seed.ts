@@ -5,11 +5,13 @@ export const seedDatabase = async () => {
   try {
     await sequelize.sync({ force: true });
 
-    const user1 = await User.create({
+    console.log("Database synced.");
+
+    await User.create({
       email: "admin@gmail.com",
       password: "admin",
     });
-    const user2 = await User.create({
+    await User.create({
       email: "admin@hotmail.com",
       password: "password",
     });

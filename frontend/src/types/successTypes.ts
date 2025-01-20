@@ -5,8 +5,10 @@ export type SuccessMessageType = {
 export type SuccessResponseCardType = {
   id: number;
   content: string;
-  likedByUserIds: number[];
-  dislikedByUserIds: number[];
+  isLikedByCurrentUser: boolean;
+  isDislikedByCurrentUser: boolean;
+  totalLikes: number;
+  totalDislikes: number;
   owner: {
     id: number;
     email: string;

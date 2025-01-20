@@ -25,11 +25,10 @@ router.get("/cards", verifyJwt, (req, res) =>
 router.post("/card", verifyJwt, (req, res) =>
   cardController.createCard(req, res),
 );
-router.post("/card/:id/reaction", verifyJwt, (req, res) =>
+router.put("/card/:id/reaction", verifyJwt, (req, res) =>
   cardController.addReaction(req, res),
 );
 router.delete("/card/:id", (req, res) => cardController.deleteCard(req, res));
-router.put("/card/:id", (req, res) => cardController.updateCard(req, res));
 
 // Auth routes
 router.post("/login", (req, res) => authController.login(req, res));

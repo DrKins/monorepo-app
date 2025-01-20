@@ -11,7 +11,7 @@ type CreateReactionData = {
 
 const createReactionRequest = async ({ id, ...data }: CreateReactionData) => {
   const response = await fetch(`${backendUrl}/api/card/${id}/reaction`, {
-    method: "POST",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("token") ?? "",

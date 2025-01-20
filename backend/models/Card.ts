@@ -5,14 +5,20 @@ interface CardAttributes {
   id: number;
   content: string;
   userId: number;
-  likedByUserIds: string;
-  dislikedByUserIds: string;
+  isLikedByCurrentUser: boolean;
+  isDislikedByCurrentUser: boolean;
+  totalLikes: number;
+  totalDislikes: number;
 }
 
 interface CardCreationAttributes
   extends Optional<
     CardAttributes,
-    "id" | "likedByUserIds" | "dislikedByUserIds"
+    | "id"
+    | "isLikedByCurrentUser"
+    | "isDislikedByCurrentUser"
+    | "totalLikes"
+    | "totalDislikes"
   > {}
 
 export class Card
@@ -22,8 +28,10 @@ export class Card
   declare id: number;
   declare content: string;
   declare userId: number;
-  declare likedByUserIds: string;
-  declare dislikedByUserIds: string;
+  declare isLikedByCurrentUser: boolean;
+  declare isDislikedByCurrentUser: boolean;
+  declare totalLikes: number;
+  declare totalDislikes: number;
 }
 
 Card.init(
@@ -45,13 +53,25 @@ Card.init(
         key: "id",
       },
     },
-    likedByUserIds: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    isLikedByCurrentUser: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
-    dislikedByUserIds: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    isDislikedByCurrentUser: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    totalLikes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    totalDislikes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
   },
   {

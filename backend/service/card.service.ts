@@ -13,18 +13,9 @@ export class CardService {
 
   async getCards(req: Request, res: Response, next?: NextFunction) {
     try {
-      const cards = await this.cardRepository.getCards();
-      const formattedCards = cards.map((card) => ({
-        ...card.toJSON(),
-        likedByUserIds: card.likedByUserIds
-          ? card.likedByUserIds.split(",").map((id) => parseInt(id, 10))
-          : [],
-        dislikedByUserIds: card.dislikedByUserIds
-          ? card.dislikedByUserIds.split(",").map((id) => parseInt(id, 10))
-          : [],
-      }));
+      const cards = await this.cardRepository.getCards(req);
 
-      return formattedCards;
+      return cards;
     } catch (error) {
       if (error instanceof Error) {
         res.status(500).json(generateErrorResponse(error.message, true));
@@ -82,15 +73,6 @@ export class CardService {
       return task;
     } catch (error) {
       res.status(500).json({ message: "Error deleting task" });
-    }
-  }
-
-  async updateCard(req: Request, res: Response, next?: NextFunction) {
-    try {
-      const task = await this.cardRepository.updateCard(req);
-      return task;
-    } catch (error) {
-      res.send(500).json({ message: "Error updating task" });
     }
   }
 }

@@ -15,27 +15,30 @@ type AddReactionParams = {
 };
 
 export class CardRepository {
-  async getCards() {
+  async getCards(req: Request) {
+    const userId = req?.user?.id;
     try {
       const cards = await Card.findAll({
         attributes: [
           "id",
           "content",
+          "totalLikes",
+          "totalDislikes",
           [
             sequelize.literal(`(
-            SELECT GROUP_CONCAT(r.userId)
+            SELECT COUNT(*)
             FROM reactions AS r
-            WHERE r.cardId = Card.id AND r.type = 'like'
+            WHERE r.cardId = Card.id AND r.userId = '${userId}' AND r.type = 'like'
           )`),
-            "likedByUserIds",
+            "isLikedByCurrentUser",
           ],
           [
             sequelize.literal(`(
-            SELECT GROUP_CONCAT(r.userId)
+            SELECT COUNT(*)
             FROM reactions AS r
-            WHERE r.cardId = Card.id AND r.type = 'dislike'
+            WHERE r.cardId = Card.id AND r.userId = '${userId}' AND r.type = 'dislike'
           )`),
-            "dislikedByUserIds",
+            "isDislikedByCurrentUser",
           ],
         ],
         include: [
@@ -58,10 +61,25 @@ export class CardRepository {
         where: { userId, cardId },
       });
 
-      if (existingReaction) {
+      const card = await Card.findByPk(cardId);
+
+      if (existingReaction && existingReaction.type === type) {
+        type === "like"
+          ? card?.update({ totalLikes: card.totalLikes - 1 })
+          : card?.update({ totalDislikes: card.totalDislikes - 1 });
+
+        await existingReaction.destroy();
+        return "Reaction removed successfully";
+      } else if (existingReaction) {
+        type === "like"
+          ? card?.update({ totalLikes: card.totalLikes + 1 })
+          : card?.update({ totalDislikes: card.totalDislikes + 1 });
         await existingReaction.update({ type });
         return "Reaction updated successfully";
       }
+      type === "like"
+        ? card?.update({ totalLikes: card.totalLikes + 1 })
+        : card?.update({ totalDislikes: card.totalDislikes + 1 });
       await Reaction.create({ userId, cardId, type });
       return "Reaction added successfully";
     } catch (error) {
@@ -80,20 +98,4 @@ export class CardRepository {
   }
 
   async deleteCard(req: Request) {}
-
-  async updateCard(req: Request) {
-    try {
-      const { id } = req.params;
-      const { content } = req.body;
-      const card = await Card.findByPk(id);
-      if (!card) {
-        throw new Error("Card not found");
-      }
-      card.set({ content });
-      await card.save();
-      return "Task updated successfully";
-    } catch (error) {
-      throw error;
-    }
-  }
 }

@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { CardRepository } from "../repository/card.repository";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
-import { cardSchema } from "../validation/card.validation";
+import { cardSchema, reactionSchema } from "../validation/card.validation";
 
 export class CardService {
   private cardRepository: CardRepository;
@@ -27,17 +27,23 @@ export class CardService {
   async addReaction(req: Request, res: Response, next?: NextFunction) {
     try {
       if (req.body) {
+        const validatedData = reactionSchema.parse(req.body);
+
         const task = await this.cardRepository.addReaction({
           userId: req?.user?.id,
           cardId: parseInt(req.params.id),
-          type: req.body.type,
+          type: validatedData.type,
         });
         return task;
       } else {
-        res.status(400).json({ message: "Missing request body" });
-        return;
+        throw new Error("No type of reaction provided");
       }
     } catch (error) {
+      if (error instanceof ZodError) {
+        res.status(422).json(generateErrorResponse(error.errors));
+        return;
+      }
+
       if (error instanceof Error) {
         res.status(500).json(generateErrorResponse(error.message, true));
         return;

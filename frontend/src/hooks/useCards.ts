@@ -23,6 +23,5 @@ export const useCards = () => {
     },
 
     refetchOnWindowFocus: false,
-    staleTime: Infinity,
   });
 };

@@ -20,11 +20,6 @@ import { SuccessResponseCardType } from "../../types/successTypes";
 import { getColorFromEmail } from "../../utils/getColorFromEmail";
 import { HandleContextComponent } from "../ViewMoreText/ViewMoreText";
 
-const Interactions = {
-  like: "liked",
-  dislike: "disliked",
-};
-
 type CardQuoteProps = {
   info: SuccessResponseCardType;
 };

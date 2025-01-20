@@ -17,6 +17,7 @@ type AddReactionParams = {
 export class CardRepository {
   async getCards(req: Request) {
     const userId = req?.user?.id;
+    console.log("this is userId", userId);
     try {
       const cards = await Card.findAll({
         attributes: [
@@ -72,8 +73,14 @@ export class CardRepository {
         return "Reaction removed successfully";
       } else if (existingReaction) {
         type === "like"
-          ? card?.update({ totalLikes: card.totalLikes + 1 })
-          : card?.update({ totalDislikes: card.totalDislikes + 1 });
+          ? card?.update({
+              totalLikes: card.totalLikes + 1,
+              totalDislikes: card.totalDislikes - 1,
+            })
+          : card?.update({
+              totalDislikes: card.totalDislikes + 1,
+              totalLikes: card.totalLikes - 1,
+            });
         await existingReaction.update({ type });
         return "Reaction updated successfully";
       }

@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { AuthRepository } from "../repository/auth.repository";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
+import { comparePassword, hashPassword } from "../utils/hash";
 import { signJwt } from "../utils/jwt";
 import { loginSchema, registerSchema } from "../validation/auth.validation";
 
@@ -17,9 +18,16 @@ export class AuthService {
       const { email, password } = loginSchema.parse(req.body);
       const user = await this.authRepository.findUserByEmail(email);
 
-      if (!user || user.password !== password) {
-        throw new Error("Invalid email or password");
+      if (!user) {
+        throw new Error("Invalid Email Adress");
       }
+
+      const match = await comparePassword(password, user.password);
+
+      if (!match) {
+        throw new Error("Invalid Password");
+      }
+
       // Payload for the token
       const payload = { id: user.id, email: user.email };
 
@@ -45,6 +53,9 @@ export class AuthService {
   async register(req: Request, res: Response, next?: NextFunction) {
     try {
       const { email, password } = registerSchema.parse(req.body);
+
+      const hashedPassword = await hashPassword(password);
+
       const userAlreadyExists = await this.authRepository.findUserByEmail(
         email,
       );
@@ -55,7 +66,7 @@ export class AuthService {
 
       await this.authRepository.createUser({
         email,
-        password,
+        password: hashedPassword,
       });
 
       res.status(201).json({ message: "User created successfully" });

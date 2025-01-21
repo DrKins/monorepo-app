@@ -1,4 +1,5 @@
 import { User } from "../models/User";
+import { hashPassword } from "../utils/hash";
 import { sequelize } from "./db";
 
 export const seedDatabase = async () => {
@@ -9,11 +10,11 @@ export const seedDatabase = async () => {
 
     await User.create({
       email: "admin@gmail.com",
-      password: "admin",
+      password: await hashPassword("admin"),
     });
     await User.create({
       email: "admin@hotmail.com",
-      password: "password",
+      password: await hashPassword("password"),
     });
 
     console.log("Initial data seeded.");

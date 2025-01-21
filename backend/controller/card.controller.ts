@@ -13,11 +13,6 @@ export class CardController {
     res.json(tasks);
   }
 
-  async addReaction(req: Request, res: Response) {
-    const task = await this.cardService.addReaction(req, res);
-    res.json(task);
-  }
-
   async createCard(req: Request, res: Response) {
     const task = await this.cardService.createCard(req, res);
     res.json(task);

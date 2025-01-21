@@ -10,7 +10,7 @@ type CreateReactionData = {
 };
 
 const createReactionRequest = async ({ id, ...data }: CreateReactionData) => {
-  const response = await fetch(`${backendUrl}/api/card/${id}/reaction`, {
+  const response = await fetch(`${backendUrl}/api/reaction/card/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

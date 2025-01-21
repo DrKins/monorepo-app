@@ -1,6 +1,6 @@
 import type { Request } from "express";
 import { sequelize } from "../config/db";
-import { Reaction, User } from "../models";
+import { User } from "../models";
 import { Card } from "../models/Card";
 
 type CardParams = {
@@ -8,16 +8,19 @@ type CardParams = {
   userId: number;
 };
 
-type AddReactionParams = {
-  userId: number;
-  cardId: number;
-  type: "like" | "dislike";
-};
-
 export class CardRepository {
+  async getCardById(cardId: number) {
+    try {
+      const card = await Card.findByPk(cardId);
+      return card;
+    } catch (error) {
+      console.error("Error fetching card:", error);
+      throw error;
+    }
+  }
+
   async getCards(req: Request) {
     const userId = req?.user?.id;
-    console.log("this is userId", userId);
     try {
       const cards = await Card.findAll({
         attributes: [
@@ -53,43 +56,6 @@ export class CardRepository {
       return cards;
     } catch (error) {
       console.error("Error fetching cards:", error);
-      throw error;
-    }
-  }
-  async addReaction({ cardId, userId, type }: AddReactionParams) {
-    try {
-      const existingReaction = await Reaction.findOne({
-        where: { userId, cardId },
-      });
-
-      const card = await Card.findByPk(cardId);
-
-      if (existingReaction && existingReaction.type === type) {
-        type === "like"
-          ? card?.update({ totalLikes: card.totalLikes - 1 })
-          : card?.update({ totalDislikes: card.totalDislikes - 1 });
-
-        await existingReaction.destroy();
-        return "Reaction removed successfully";
-      } else if (existingReaction) {
-        type === "like"
-          ? card?.update({
-              totalLikes: card.totalLikes + 1,
-              totalDislikes: card.totalDislikes - 1,
-            })
-          : card?.update({
-              totalDislikes: card.totalDislikes + 1,
-              totalLikes: card.totalLikes - 1,
-            });
-        await existingReaction.update({ type });
-        return "Reaction updated successfully";
-      }
-      type === "like"
-        ? card?.update({ totalLikes: card.totalLikes + 1 })
-        : card?.update({ totalDislikes: card.totalDislikes + 1 });
-      await Reaction.create({ userId, cardId, type });
-      return "Reaction added successfully";
-    } catch (error) {
       throw error;
     }
   }

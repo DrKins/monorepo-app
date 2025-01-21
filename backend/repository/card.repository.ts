@@ -8,6 +8,12 @@ type CardParams = {
   userId: number;
 };
 
+type UpdateCardReactionCountParams = {
+  cardId: number;
+  totalLikes: number;
+  totalDislikes: number;
+};
+
 export class CardRepository {
   async getCardById(cardId: number) {
     try {
@@ -65,6 +71,22 @@ export class CardRepository {
       const card = await Card.create(cardParam);
       const results = await card.save();
       return results;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateCardReactionCount({
+    cardId,
+    totalLikes,
+    totalDislikes,
+  }: UpdateCardReactionCountParams) {
+    try {
+      const card = await Card.findByPk(cardId);
+      card?.update({
+        totalLikes,
+        totalDislikes,
+      });
     } catch (error) {
       throw error;
     }

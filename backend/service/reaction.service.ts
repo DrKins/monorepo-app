@@ -31,12 +31,12 @@ export class ReactionService {
 
         if (existingReaction && existingReaction.type === type) {
           type === "like"
-            ? this.reactionRepository.updateReaction({
+            ? cardRepository.updateCardReactionCount({
                 totalLikes: card.totalLikes - 1,
                 cardId,
                 totalDislikes: card.totalDislikes,
               })
-            : this.reactionRepository.updateReaction({
+            : cardRepository.updateCardReactionCount({
                 totalDislikes: card.totalDislikes - 1,
                 cardId,
                 totalLikes: card.totalLikes,
@@ -46,12 +46,12 @@ export class ReactionService {
           return "Reaction removed successfully";
         } else if (existingReaction) {
           type === "like"
-            ? this.reactionRepository.updateReaction({
+            ? cardRepository.updateCardReactionCount({
                 cardId,
                 totalLikes: card.totalLikes + 1,
                 totalDislikes: card.totalDislikes - 1,
               })
-            : this.reactionRepository.updateReaction({
+            : cardRepository.updateCardReactionCount({
                 cardId,
                 totalDislikes: card.totalDislikes + 1,
                 totalLikes: card.totalLikes - 1,
@@ -60,12 +60,12 @@ export class ReactionService {
           return "Reaction updated successfully";
         }
         type === "like"
-          ? this.reactionRepository.updateReaction({
+          ? cardRepository.updateCardReactionCount({
               cardId,
               totalLikes: card.totalLikes + 1,
               totalDislikes: card.totalDislikes,
             })
-          : this.reactionRepository.updateReaction({
+          : cardRepository.updateCardReactionCount({
               cardId,
               totalLikes: card.totalLikes,
               totalDislikes: card.totalDislikes + 1,

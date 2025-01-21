@@ -1,15 +1,9 @@
-import { Card, Reaction } from "../models";
+import { Reaction } from "../models";
 
 type AddReactionParams = {
   userId: number;
   cardId: number;
   type: "like" | "dislike";
-};
-
-type UpdateReactionParams = {
-  cardId: number;
-  totalLikes: number;
-  totalDislikes: number;
 };
 
 type GetReactionsByCardIdAndUserIdParams = {
@@ -32,21 +26,6 @@ export class ReactionRepository {
     }
   }
 
-  async updateReaction({
-    cardId,
-    totalLikes,
-    totalDislikes,
-  }: UpdateReactionParams) {
-    try {
-      const card = await Card.findByPk(cardId);
-      card?.update({
-        totalLikes,
-        totalDislikes,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
   async addReaction({ cardId, userId, type }: AddReactionParams) {
     try {
       await Reaction.create({ userId, cardId, type });

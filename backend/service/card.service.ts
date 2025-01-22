@@ -4,6 +4,7 @@ import { cardSchema } from "../validation/card.validation";
 
 type GetCardsTypeProps = {
   search?: string;
+  sort?: string;
   userId: number;
 };
 
@@ -14,14 +15,39 @@ export class CardService {
     this.cardRepository = cardRepository;
   }
 
-  async getCards({ search, userId }: GetCardsTypeProps) {
+  async getCards({ search, sort, userId }: GetCardsTypeProps) {
+    let cards;
     if (search) {
-      const cards = await this.cardRepository.searchCards(search);
+      cards = await this.cardRepository.searchCards(search);
+      return cards;
+    } else {
+      cards = await this.cardRepository.getCards({ userId });
+    }
+    if (!cards) throw new Error("Error fetching cards");
+
+    if (sort) {
+      switch (sort) {
+        case "recent":
+          cards = cards.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
+          break;
+        case "oldest":
+          cards = cards.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+          );
+          break;
+        case "mine":
+          cards = cards.filter((card) => card?.owner?.id === userId);
+          break;
+        default:
+          throw new Error(`Unknown sort option: ${sort}`);
+      }
+
       return cards;
     }
-    const cards = await this.cardRepository.getCards({ userId });
-    if (!cards) throw new Error("Error fetching cards");
-    return cards;
   }
 
   async createCard(req: Request, res: Response, next?: NextFunction) {

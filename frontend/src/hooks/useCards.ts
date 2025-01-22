@@ -3,12 +3,18 @@ import { QUERY_KEYS } from "../constants/queryKeys";
 import { SuccessResponseCardType } from "../types/successTypes";
 import { backendUrl } from "../utils/getBackendUrl";
 
-export const useCards = (search: string) => {
+type UseCardsProps = {
+  search: string;
+  sort: string;
+};
+export const useCards = ({ search, sort }: UseCardsProps) => {
   return useQuery<SuccessResponseCardType[], { message: string }>({
-    queryKey: [QUERY_KEYS.CARDS, search],
+    queryKey: [QUERY_KEYS.CARDS, search, sort],
     queryFn: async () => {
       const response = await fetch(
-        `${backendUrl}/api/cards?search=${encodeURIComponent(search)}`,
+        `${backendUrl}/api/cards?search=${encodeURIComponent(
+          search,
+        )}&sort=${encodeURIComponent(sort)}`,
         {
           method: "GET",
           headers: {

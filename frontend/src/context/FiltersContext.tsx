@@ -2,13 +2,14 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 
 type Filters = {
   search: string;
+  sort: string;
 };
 type FiltersContextType = {
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
 };
 
-const initialFilters: Filters = { search: "" };
+const initialFilters: Filters = { search: "", sort: "recent" };
 
 const FiltersContext = createContext<FiltersContextType | undefined>(undefined);
 

@@ -29,7 +29,7 @@ export default function HeaderControlls({
 
   const handleReset = () => {
     setSearchInput("");
-    setFilters({ search: "" });
+    setFilters({ search: "", sort: filters.sort });
   };
 
   useEffect(() => {
@@ -59,12 +59,12 @@ export default function HeaderControlls({
       </InputGroup>
 
       <Select
-        disabled
+        onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
         width={{ base: "unset", md: "300px" }}
-        defaultValue={"option3"}>
-        <option value="option1">Top rated</option>
-        <option value="option2">Worst rated</option>
-        <option value="option3">Most recent</option>
+        defaultValue={"recent"}>
+        <option value="mine">My cards</option>
+        <option value="oldest">Most oldest</option>
+        <option value="recent">Most recent</option>
       </Select>
 
       <Button

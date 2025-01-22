@@ -1,4 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
+import { User } from ".";
 import { sequelize } from "../config/db";
 
 interface CardAttributes {
@@ -9,6 +10,9 @@ interface CardAttributes {
   isDislikedByCurrentUser: boolean;
   totalLikes: number;
   totalDislikes: number;
+  createdAt: Date;
+  updatedAt: Date;
+  owner?: User;
 }
 
 interface CardCreationAttributes
@@ -19,6 +23,7 @@ interface CardCreationAttributes
     | "isDislikedByCurrentUser"
     | "totalLikes"
     | "totalDislikes"
+    | "owner"
   > {}
 
 export class Card
@@ -32,6 +37,9 @@ export class Card
   declare isDislikedByCurrentUser: boolean;
   declare totalLikes: number;
   declare totalDislikes: number;
+  declare createdAt: Date;
+  declare updatedAt: Date;
+  declare owner?: User;
 }
 
 Card.init(
@@ -72,6 +80,14 @@ Card.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
     },
   },
   {

@@ -53,6 +53,6 @@ Reaction.init(
     sequelize,
     modelName: "Reaction",
     tableName: "reactions",
-    timestamps: false,
+    timestamps: true,
   },
 );

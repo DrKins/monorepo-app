@@ -23,7 +23,13 @@ export class CardRepository {
   async searchCards(query: string) {
     try {
       const cards = await Card.findAll({
-        attributes: ["id", "content", "totalLikes", "totalDislikes"],
+        attributes: [
+          "id",
+          "content",
+          "totalLikes",
+          "totalDislikes",
+          "createdAt",
+        ],
         include: [
           {
             model: User,
@@ -62,6 +68,7 @@ export class CardRepository {
           "content",
           "totalLikes",
           "totalDislikes",
+          "createdAt",
           [
             sequelize.literal(`(
             SELECT COUNT(*)
@@ -96,7 +103,12 @@ export class CardRepository {
 
   async createCard(cardParam: CardParams) {
     try {
-      const card = await Card.create(cardParam);
+      const cardAttributes = {
+        ...cardParam,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const card = await Card.create(cardAttributes);
       const results = await card.save();
       return results;
     } catch (error) {

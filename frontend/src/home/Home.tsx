@@ -21,11 +21,9 @@ const MotionBox = motion(Box);
 
 export default function Home() {
   const { user, setUser } = useUserContext();
-  const {
-    filters: { search },
-  } = useFiltersContext();
+  const { filters } = useFiltersContext();
   const [isCreateCardOpen, setIsCreateCardOpen] = useState(false);
-  const { data, isError, isLoading, isSuccess, refetch } = useCards(search);
+  const { data, isError, isLoading, isSuccess, refetch } = useCards(filters);
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -16,14 +16,12 @@ export class ReactionRepository {
     cardId,
     userId,
   }: GetReactionsByCardIdAndUserIdParams) {
-    console.log("cardId", cardId, "userId", userId);
     const reaction = await Reaction.findOne({
       where: {
         userId,
         cardId,
       },
     });
-    if (!reaction) throw new Error("Reaction not found");
     return reaction;
   }
 

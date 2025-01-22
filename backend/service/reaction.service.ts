@@ -1,17 +1,15 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
-import { Reaction } from "../models";
+import { CardRepository } from "../repository/card.repository";
 import { ReactionRepository } from "../repository/reaction.respository";
-import { cardRepository } from "../routes";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
 import { reactionSchema } from "../validation/card.validation";
 
 export class ReactionService {
-  private reactionRepository: ReactionRepository;
-
-  constructor(reactionRepository: ReactionRepository) {
-    this.reactionRepository = reactionRepository;
-  }
+  constructor(
+    private reactionRepository: ReactionRepository,
+    private cardRepository: CardRepository,
+  ) {}
 
   async addReaction(req: Request, res: Response, next?: NextFunction) {
     try {
@@ -21,24 +19,23 @@ export class ReactionService {
         const userId = parseInt(req?.user?.id);
         const cardId = parseInt(req.params.id);
 
-        const existingReaction = await Reaction.findOne({
-          where: {
+        const existingReaction =
+          await this.reactionRepository.getReactionByCardIdAndUserId({
             userId,
             cardId,
-          },
-        });
+          });
 
-        const card = await cardRepository.getCardById(cardId);
+        const card = await this.cardRepository.getCardById(cardId);
         if (!card) throw new Error("Card not found");
 
         if (existingReaction && existingReaction.type === type) {
           type === "like"
-            ? cardRepository.updateCardReactionCount({
+            ? this.cardRepository.updateCardReactionCount({
                 totalLikes: card.totalLikes - 1,
                 cardId,
                 totalDislikes: card.totalDislikes,
               })
-            : cardRepository.updateCardReactionCount({
+            : this.cardRepository.updateCardReactionCount({
                 totalDislikes: card.totalDislikes - 1,
                 cardId,
                 totalLikes: card.totalLikes,
@@ -48,12 +45,12 @@ export class ReactionService {
           return "Reaction removed successfully";
         } else if (existingReaction) {
           type === "like"
-            ? cardRepository.updateCardReactionCount({
+            ? this.cardRepository.updateCardReactionCount({
                 cardId,
                 totalLikes: card.totalLikes + 1,
                 totalDislikes: card.totalDislikes - 1,
               })
-            : cardRepository.updateCardReactionCount({
+            : this.cardRepository.updateCardReactionCount({
                 cardId,
                 totalDislikes: card.totalDislikes + 1,
                 totalLikes: card.totalLikes - 1,
@@ -62,12 +59,12 @@ export class ReactionService {
           return "Reaction updated successfully";
         }
         type === "like"
-          ? cardRepository.updateCardReactionCount({
+          ? this.cardRepository.updateCardReactionCount({
               cardId,
               totalLikes: card.totalLikes + 1,
               totalDislikes: card.totalDislikes,
             })
-          : cardRepository.updateCardReactionCount({
+          : this.cardRepository.updateCardReactionCount({
               cardId,
               totalLikes: card.totalLikes,
               totalDislikes: card.totalDislikes + 1,

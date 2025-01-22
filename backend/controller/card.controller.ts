@@ -13,7 +13,6 @@ export class CardController {
   async getCards(req: Request, res: Response) {
     try {
       const { search } = req.query;
-      console.log("THIS IS SEARCH: ", search);
       const searchValue = Array.isArray(search)
         ? search.join(" ")
         : (search as string);

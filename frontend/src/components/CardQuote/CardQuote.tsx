@@ -22,6 +22,7 @@ import { HandleContextComponent } from "../ViewMoreText/ViewMoreText";
 
 type CardQuoteProps = {
   info: SuccessResponseCardType;
+  refetchCards: () => void;
 };
 
 export default function CardQuote({
@@ -34,10 +35,18 @@ export default function CardQuote({
     totalLikes,
     totalDislikes,
   },
+  refetchCards,
 }: CardQuoteProps) {
   const { mutate, isPending } = useReaction();
   const handleReaction = (type: "like" | "dislike") => {
-    mutate({ type, id });
+    mutate(
+      { type, id },
+      {
+        onSuccess: () => {
+          refetchCards();
+        },
+      },
+    );
   };
 
   return (

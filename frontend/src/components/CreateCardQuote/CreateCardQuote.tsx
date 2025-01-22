@@ -22,11 +22,13 @@ const MotionCardFooter = motion(CardFooter);
 type CreateCardQuoteProps = {
   isCreateCardOpen: boolean;
   setIsCreateCardOpen: Dispatch<SetStateAction<boolean>>;
+  refetchCards: () => void;
 };
 
 export default function CreateCardQuote({
   isCreateCardOpen,
   setIsCreateCardOpen,
+  refetchCards,
 }: CreateCardQuoteProps) {
   const { user } = useUserContext();
   const { mutate, isPending, isSuccess } = useCreateCard();
@@ -40,10 +42,13 @@ export default function CreateCardQuote({
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setCreateCardForm({ ...createCardForm, content: e.target.value });
   }
-
   function handleCreateCard() {
     if (createCardForm.content.length > 255) return;
-    mutate(createCardForm);
+    mutate(createCardForm, {
+      onSuccess: () => {
+        refetchCards();
+      },
+    });
     setIsCreateCardOpen(false);
   }
 

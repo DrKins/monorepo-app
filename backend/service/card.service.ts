@@ -1,8 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import { ZodError } from "zod";
 import { CardRepository } from "../repository/card.repository";
-import { generateErrorResponse } from "../utils/generateErrorResponse";
 import { cardSchema } from "../validation/card.validation";
+
+type GetCardsTypeProps = {
+  search?: string;
+  userId: number;
+};
 
 export class CardService {
   private cardRepository: CardRepository;
@@ -11,47 +14,29 @@ export class CardService {
     this.cardRepository = cardRepository;
   }
 
-  async getCards(req: Request, res: Response, next?: NextFunction) {
-    try {
-      const cards = await this.cardRepository.getCards(req);
-
+  async getCards({ search, userId }: GetCardsTypeProps) {
+    if (search) {
+      const cards = await this.cardRepository.searchCards(search);
       return cards;
-    } catch (error) {
-      if (error instanceof Error) {
-        res.status(500).json(generateErrorResponse(error.message, true));
-        return;
-      }
     }
+    const cards = await this.cardRepository.getCards({ userId });
+    if (!cards) throw new Error("Error fetching cards");
+    return cards;
   }
 
   async createCard(req: Request, res: Response, next?: NextFunction) {
-    try {
-      const validatedData = cardSchema.parse(req.body);
+    const validatedData = cardSchema.parse(req.body);
 
-      const task = await this.cardRepository.createCard({
-        ...validatedData,
-        userId: req?.user?.id,
-      });
-      return task;
-    } catch (error) {
-      if (error instanceof ZodError) {
-        res.status(422).json(generateErrorResponse(error.errors));
-        return;
-      }
-
-      if (error instanceof Error) {
-        res.status(500).json(generateErrorResponse(error.message, true));
-        return;
-      }
-    }
+    const task = await this.cardRepository.createCard({
+      ...validatedData,
+      userId: req?.user?.id,
+    });
+    if (!task) throw new Error("Error creating task");
+    return task;
   }
 
   async deleteCard(req: Request, res: Response, next?: NextFunction) {
-    try {
-      const task = await this.cardRepository.deleteCard(req);
-      return task;
-    } catch (error) {
-      res.status(500).json({ message: "Error deleting task" });
-    }
+    const task = await this.cardRepository.deleteCard(req);
+    return task;
   }
 }

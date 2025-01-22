@@ -16,22 +16,20 @@ export class ReactionRepository {
     cardId,
     userId,
   }: GetReactionsByCardIdAndUserIdParams) {
-    try {
-      const reaction = await Reaction.findOne({
-        where: { cardId, userId },
-      });
-      return reaction;
-    } catch (error) {
-      throw error;
-    }
+    console.log("cardId", cardId, "userId", userId);
+    const reaction = await Reaction.findOne({
+      where: {
+        userId,
+        cardId,
+      },
+    });
+    if (!reaction) throw new Error("Reaction not found");
+    return reaction;
   }
 
   async addReaction({ cardId, userId, type }: AddReactionParams) {
-    try {
-      await Reaction.create({ userId, cardId, type });
-      return "Reaction added successfully";
-    } catch (error) {
-      throw error;
-    }
+    const reaction = await Reaction.create({ userId, cardId, type });
+    if (!reaction) throw new Error("Error adding reaction");
+    return reaction;
   }
 }

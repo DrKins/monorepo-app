@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
+import { Reaction } from "../models";
 import { ReactionRepository } from "../repository/reaction.respository";
 import { cardRepository } from "../routes";
 import { generateErrorResponse } from "../utils/generateErrorResponse";
@@ -17,14 +18,15 @@ export class ReactionService {
       if (req.body) {
         const validatedData = reactionSchema.parse(req.body);
         const { type } = validatedData;
-        const userId = req?.user?.id;
+        const userId = parseInt(req?.user?.id);
         const cardId = parseInt(req.params.id);
 
-        const existingReaction =
-          await this.reactionRepository.getReactionByCardIdAndUserId({
-            cardId,
+        const existingReaction = await Reaction.findOne({
+          where: {
             userId,
-          });
+            cardId,
+          },
+        });
 
         const card = await cardRepository.getCardById(cardId);
         if (!card) throw new Error("Card not found");
@@ -76,7 +78,8 @@ export class ReactionService {
           cardId,
           type: validatedData.type,
         });
-        return task;
+        if (!task) throw new Error("Error adding reaction");
+        return "Reaction added successfully";
       } else {
         throw new Error("No type of reaction provided");
       }

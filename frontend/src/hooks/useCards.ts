@@ -3,16 +3,19 @@ import { QUERY_KEYS } from "../constants/queryKeys";
 import { SuccessResponseCardType } from "../types/successTypes";
 import { backendUrl } from "../utils/getBackendUrl";
 
-export const useCards = () => {
+export const useCards = (search: string) => {
   return useQuery<SuccessResponseCardType[], { message: string }>({
-    queryKey: QUERY_KEYS.CARDS,
+    queryKey: [QUERY_KEYS.CARDS, search],
     queryFn: async () => {
-      const response = await fetch(`${backendUrl}/api/cards`, {
-        method: "GET",
-        headers: {
-          Authorization: localStorage.getItem("token") ?? "",
+      const response = await fetch(
+        `${backendUrl}/api/cards?search=${encodeURIComponent(search)}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: localStorage.getItem("token") ?? "",
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -21,7 +24,6 @@ export const useCards = () => {
 
       return response.json();
     },
-
-    refetchOnWindowFocus: false,
+    enabled: true,
   });
 };

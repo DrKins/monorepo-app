@@ -1,4 +1,5 @@
 import type { Request } from "express";
+import { Op } from "sequelize";
 import { sequelize } from "../config/db";
 import { User } from "../models";
 import { Card } from "../models/Card";
@@ -14,7 +15,35 @@ type UpdateCardReactionCountParams = {
   totalDislikes: number;
 };
 
+type GetCardsParams = {
+  userId: number;
+};
+
 export class CardRepository {
+  async searchCards(query: string) {
+    try {
+      const cards = await Card.findAll({
+        attributes: ["id", "content", "totalLikes", "totalDislikes"],
+        include: [
+          {
+            model: User,
+            as: "owner",
+            attributes: ["email", "id"],
+          },
+        ],
+        where: {
+          content: {
+            [Op.like]: `%${query}%`,
+          },
+        },
+      });
+      return cards;
+    } catch (error) {
+      console.error("Error searching cards:", error);
+      throw error;
+    }
+  }
+
   async getCardById(cardId: number) {
     try {
       const card = await Card.findByPk(cardId);
@@ -25,8 +54,7 @@ export class CardRepository {
     }
   }
 
-  async getCards(req: Request) {
-    const userId = req?.user?.id;
+  async getCards({ userId }: GetCardsParams) {
     try {
       const cards = await Card.findAll({
         attributes: [

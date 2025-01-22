@@ -8,6 +8,7 @@ type UseCardsProps = {
   sort: string;
 };
 export const useCards = ({ search, sort }: UseCardsProps) => {
+  const token = sessionStorage?.getItem("token") ?? "";
   return useQuery<SuccessResponseCardType[], { message: string }>({
     queryKey: [QUERY_KEYS.CARDS, search, sort],
     queryFn: async () => {
@@ -18,7 +19,7 @@ export const useCards = ({ search, sort }: UseCardsProps) => {
         {
           method: "GET",
           headers: {
-            Authorization: localStorage.getItem("token") ?? "",
+            Authorization: "Bearer " + token,
           },
         },
       );

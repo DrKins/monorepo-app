@@ -47,7 +47,7 @@ export const useLogin = () => {
     mutationFn: ({ email, password }: LoginData) =>
       loginRequest({ email, password }),
     onSuccess: (user) => {
-      localStorage.setItem("token", "Bearer " + user.token);
+      sessionStorage.setItem("token", user.token);
       setUser(user.payload);
       navigate("/");
     },

@@ -10,11 +10,12 @@ type CreateReactionData = {
 };
 
 const createReactionRequest = async ({ id, ...data }: CreateReactionData) => {
+  const token = sessionStorage?.getItem("token") ?? "";
   const response = await fetch(`${backendUrl}/api/reaction/card/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("token") ?? "",
+      Authorization: "Bearer " + token,
     },
     body: JSON.stringify(data),
   });

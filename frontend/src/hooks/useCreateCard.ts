@@ -8,11 +8,12 @@ type CreateCardData = {
 };
 
 const createCardRequest = async (data: CreateCardData) => {
+  const token = sessionStorage?.getItem("token") ?? "";
   const response = await fetch(`${backendUrl}/api/card`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("token") ?? "",
+      Authorization: "Bearer " + token,
     },
     body: JSON.stringify(data),
   });

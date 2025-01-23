@@ -17,12 +17,25 @@ type UpdateCardReactionCountParams = {
 
 type GetCardsParams = {
   userId: number;
+  page: number;
+  limit: number;
+};
+
+type SearchCardsParams = {
+  query: string;
+  page: number;
+  limit: number;
+};
+
+type FilterCards = {
+  userId: number;
+  filter: string;
 };
 
 export class CardRepository {
-  async searchCards(query: string) {
+  async searchCards({ query, page, limit }: SearchCardsParams) {
     try {
-      const cards = await Card.findAll({
+      const cards = await Card.findAndCountAll({
         attributes: [
           "id",
           "content",
@@ -42,6 +55,8 @@ export class CardRepository {
             [Op.like]: `%${query}%`,
           },
         },
+        limit: limit,
+        offset: limit * page,
       });
       return cards;
     } catch (error) {
@@ -60,9 +75,9 @@ export class CardRepository {
     }
   }
 
-  async getCards({ userId }: GetCardsParams) {
+  async getCards({ userId, page, limit }: GetCardsParams) {
     try {
-      const cards = await Card.findAll({
+      const cards = await Card.findAndCountAll({
         attributes: [
           "id",
           "content",
@@ -93,6 +108,8 @@ export class CardRepository {
             attributes: ["email", "id"],
           },
         ],
+        limit: limit,
+        offset: limit * page,
       });
       return cards;
     } catch (error) {

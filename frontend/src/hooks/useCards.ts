@@ -1,21 +1,25 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../constants/queryKeys";
-import { SuccessResponseCardType } from "../types/successTypes";
+import { SuccessResponseArrayType } from "../types/successTypes";
 import { backendUrl } from "../utils/getBackendUrl";
 
 type UseCardsProps = {
   search: string;
   sort: string;
+  page: number;
 };
-export const useCards = ({ search, sort }: UseCardsProps) => {
+export const useCards = ({ search, sort, page }: UseCardsProps) => {
   const token = sessionStorage?.getItem("token") ?? "";
-  return useQuery<SuccessResponseCardType[], { message: string }>({
-    queryKey: [QUERY_KEYS.CARDS, search, sort],
-    queryFn: async () => {
+  return useInfiniteQuery<SuccessResponseArrayType, Error>({
+    queryKey: [QUERY_KEYS.CARDS, search, sort, page],
+    queryFn: async ({ pageParam }): Promise<SuccessResponseArrayType> => {
+      const pageNumber = pageParam as number;
       const response = await fetch(
         `${backendUrl}/api/cards?search=${encodeURIComponent(
           search,
-        )}&sort=${encodeURIComponent(sort)}`,
+        )}&sort=${encodeURIComponent(sort)}&page=${encodeURIComponent(
+          pageNumber,
+        )}`,
         {
           method: "GET",
           headers: {
@@ -31,6 +35,7 @@ export const useCards = ({ search, sort }: UseCardsProps) => {
 
       return response.json();
     },
-    enabled: true,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.meta.nextPage,
   });
 };

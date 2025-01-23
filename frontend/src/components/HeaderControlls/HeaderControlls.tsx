@@ -29,12 +29,12 @@ export default function HeaderControlls({
 
   const handleReset = () => {
     setSearchInput("");
-    setFilters({ search: "", sort: filters.sort });
+    setFilters({ ...filters, search: "" });
   };
 
   useEffect(() => {
     if (debouncedSearchTerm) {
-      setFilters({ ...filters, search: debouncedSearchTerm });
+      setFilters({ ...filters, search: debouncedSearchTerm, page: 1 });
     }
   }, [debouncedSearchTerm]);
   return (
@@ -43,7 +43,7 @@ export default function HeaderControlls({
       flexDirection={{ base: "column-reverse", md: "row" }}
       gap={5}
       mb={isOpen ? 5 : 0}>
-      <InputGroup width={"fit-content"}>
+      <InputGroup width={{ base: "100%", md: "fit-content" }}>
         {searchInput && (
           <InputRightElement onClick={handleReset}>
             <DeleteIcon color="red.200" cursor={"pointer"} />
@@ -53,7 +53,7 @@ export default function HeaderControlls({
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search cards"
-          width={{ base: "unset", md: "300px" }}
+          width={{ base: "100%", md: "300px" }}
           _placeholder={{ color: "gray.400" }}
         />
       </InputGroup>
@@ -62,9 +62,9 @@ export default function HeaderControlls({
         onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
         width={{ base: "unset", md: "300px" }}
         defaultValue={"recent"}>
-        <option value="mine">My cards</option>
-        <option value="oldest">Most oldest</option>
-        <option value="recent">Most recent</option>
+        <option value="mine">Sort by My cards</option>
+        <option value="oldest">Sort by Most oldest</option>
+        <option value="recent">Sort by Most recent</option>
       </Select>
 
       <Button

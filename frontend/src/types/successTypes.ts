@@ -14,3 +14,15 @@ export type SuccessResponseCardType = {
     email: string;
   };
 };
+
+export type SuccessResponseMeta = {
+  count: number;
+  currentPage: number;
+  nextPage: number;
+  totalPages: number;
+};
+
+export type SuccessResponseArrayType = {
+  data: SuccessResponseCardType[];
+  meta: SuccessResponseMeta;
+};

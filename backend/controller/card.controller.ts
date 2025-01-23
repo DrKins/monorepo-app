@@ -12,7 +12,7 @@ export class CardController {
 
   async getCards(req: Request, res: Response) {
     try {
-      const { search, sort } = req.query;
+      const { search, sort, page, filter } = req.query;
       const searchValue = Array.isArray(search)
         ? search.join(" ")
         : (search as string);
@@ -20,9 +20,11 @@ export class CardController {
       const sortValue = Array.isArray(sort) ? sort.join(" ") : (sort as string);
 
       const userId = req?.user?.id;
+
       const tasks = await this.cardService.getCards({
         search: searchValue,
         sort: sortValue,
+        page: Number(page),
         userId,
       });
       res.json(tasks);

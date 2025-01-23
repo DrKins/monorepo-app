@@ -1,14 +1,13 @@
-import { ArrowDownIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
-  Icon,
   Skeleton,
   SkeletonCircle,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CardQuote from "../components/CardQuote/CardQuote";
 import CreateCardQuote from "../components/CreateCardQuote/CreateCardQuote";
@@ -20,14 +19,25 @@ import { useCards } from "../hooks/useCards";
 const MotionBox = motion(Box);
 
 export default function Home() {
-  const { user, setUser } = useUserContext();
+  const scrollPaginationTrigger = useRef(null);
+  const isInView = useInView(scrollPaginationTrigger);
+  const { setUser } = useUserContext();
   const { filters } = useFiltersContext();
   const [isCreateCardOpen, setIsCreateCardOpen] = useState(false);
-  const { data, isError, isLoading, isSuccess, refetch } = useCards(filters);
+  const {
+    data,
+    isError,
+    isLoading,
+    isSuccess,
+    isFetchingNextPage,
+    refetch,
+    fetchNextPage,
+  } = useCards(filters);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user?.email) {
+    const session = sessionStorage.getItem("token");
+    if (!session) {
       navigate("/login");
     }
   }, [navigate]);
@@ -36,6 +46,14 @@ export default function Home() {
     setUser(null);
     navigate("/error");
   }
+
+  useEffect(() => {
+    if (isInView) {
+      fetchNextPage();
+    }
+  }, [isInView]);
+
+  console.log("fetched data information:", data);
 
   return (
     <AnimatePresence>
@@ -59,22 +77,24 @@ export default function Home() {
           mt={5}>
           <AnimatePresence>
             {isSuccess &&
-              data?.map((card, index) => (
-                <motion.div
-                  layout
-                  key={card.id}
-                  initial={{ opacity: 0, x: -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{
-                    duration: 0.15,
-                    delay: index * 0.15,
-                    ease: "circInOut",
-                  }}
-                  style={{ flex: 1 }}>
-                  <CardQuote info={card} refetchCards={refetch} />
-                </motion.div>
-              ))}
+              data.pages.map((page) =>
+                page.data.map((card, index) => (
+                  <motion.div
+                    layout
+                    key={card.id}
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{
+                      duration: 0.15,
+                      delay: index * 0.15,
+                      ease: "circInOut",
+                    }}
+                    style={{ flex: 1 }}>
+                    <CardQuote info={card} refetchCards={refetch} />
+                  </motion.div>
+                )),
+              )}
           </AnimatePresence>
         </MotionBox>
         {isLoading && (
@@ -129,31 +149,14 @@ export default function Home() {
             </AnimatePresence>
           </MotionBox>
         )}
-        {data && data.length > 50 && (
-          <AnimatePresence>
-            <MotionBox
-              layout
-              initial={{ opacity: 0, x: "20vw" }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: "20vw" }}
-              transition={{ duration: 0.7, ease: "easeInOut", delay: 0.45 }}
-              position={"fixed"}
-              top={"50%"}
-              right={"5%"}
-              gap={5}
-              display={"flex"}
-              flexDir={"column"}>
-              <Text
-                fontSize={"2xl"}
-                style={{ writingMode: "vertical-rl" }}
-                transform={"rotate(180deg)"}
-                fontWeight={"bold"}
-                letterSpacing={"widest"}>
-                Scroll to load more ...
-              </Text>
-              <Icon as={ArrowDownIcon} boxSize={"40px"} />
-            </MotionBox>
-          </AnimatePresence>
+        <div ref={scrollPaginationTrigger}></div>
+        {isFetchingNextPage && (
+          <Flex align={"center"} justifyContent={"center"} gap={5} my={10}>
+            <Text size={"xl"} fontWeight={"semibold"}>
+              Loading content
+            </Text>
+            <Spinner size={"md"} color="green" />
+          </Flex>
         )}
       </MotionBox>
     </AnimatePresence>

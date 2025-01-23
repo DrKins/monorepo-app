@@ -5,48 +5,71 @@ import { cardSchema } from "../validation/card.validation";
 type GetCardsTypeProps = {
   search?: string;
   sort?: string;
+  page?: number;
   userId: number;
 };
 
 export class CardService {
+  private limit = 15;
   private cardRepository: CardRepository;
 
   constructor(cardRepository: CardRepository) {
     this.cardRepository = cardRepository;
   }
 
-  async getCards({ search, sort, userId }: GetCardsTypeProps) {
+  async getCards({ search, sort, page, userId }: GetCardsTypeProps) {
     let cards;
+    const pageNumber = page ? page - 1 : 0;
     if (search) {
-      cards = await this.cardRepository.searchCards(search);
-      return cards;
+      cards = await this.cardRepository.searchCards({
+        query: search,
+        page: pageNumber,
+        limit: this.limit,
+      });
     } else {
-      cards = await this.cardRepository.getCards({ userId });
+      cards = await this.cardRepository.getCards({
+        userId,
+        page: pageNumber,
+        limit: this.limit,
+      });
     }
+    if (!cards) throw new Error("Error fetching cards");
+
     if (!cards) throw new Error("Error fetching cards");
 
     if (sort) {
       switch (sort) {
         case "recent":
-          cards = cards.sort(
+          cards.rows.sort(
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
           );
           break;
         case "oldest":
-          cards = cards.sort(
+          cards.rows.sort(
             (a, b) =>
               new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
           );
           break;
         case "mine":
-          cards = cards.filter((card) => card?.owner?.id === userId);
+          cards.rows.filter((card) => card?.owner?.id === userId);
           break;
         default:
           throw new Error(`Unknown sort option: ${sort}`);
       }
 
-      return cards;
+      const { count, rows: data } = cards;
+      const readyForResponseCards = {
+        meta: {
+          count,
+          currentPage: page ?? 1,
+          nextPage: (page ?? 1) + this.limit < count ? (page ?? 1) + 1 : null,
+          totalPages: Math.ceil(count / this.limit),
+        },
+        data,
+      };
+
+      return readyForResponseCards;
     }
   }
 

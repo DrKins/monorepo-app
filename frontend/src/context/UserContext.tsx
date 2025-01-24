@@ -14,6 +14,11 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
+  const userFromSession = sessionStorage.getItem("user") as string;
+  if (!user?.email && !user?.id && userFromSession) {
+    setUser(JSON.parse(userFromSession));
+  }
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

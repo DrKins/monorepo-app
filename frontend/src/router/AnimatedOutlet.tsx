@@ -32,6 +32,7 @@ const AnimatedOutlet = (): React.JSX.Element => {
         </Flex>
       ) : (
         <Flex
+          maxWidth={1200}
           minHeight={"calc(100vh - 6px)"}
           p={6}
           justifyContent={"start"}

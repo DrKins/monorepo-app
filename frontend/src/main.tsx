@@ -19,6 +19,7 @@ createRoot(document.getElementById("root")!).render(
           <ChakraProvider theme={theme}>
             <Box
               display={"flex"}
+              justifyContent={"center"}
               alignItems={"center"}
               flexDirection={"column"}>
               <RouterProvider router={Router} />

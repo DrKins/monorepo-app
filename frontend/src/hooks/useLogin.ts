@@ -48,6 +48,7 @@ export const useLogin = () => {
       loginRequest({ email, password }),
     onSuccess: (user) => {
       sessionStorage.setItem("token", user.token);
+      sessionStorage.setItem("user", JSON.stringify(user.payload));
       setUser(user.payload);
       navigate("/");
     },

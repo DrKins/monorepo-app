@@ -53,44 +53,40 @@ export default function Home() {
     }
   }, [isInView]);
 
-  console.log("fetched data information:", data);
-
   return (
     <AnimatePresence>
-      <MotionBox layout display={"flex"} flexDirection={"column"}>
+      <Flex flexDirection={"column"}>
         <HeaderControlls
           handleOpen={setIsCreateCardOpen}
           isOpen={isCreateCardOpen}
         />
-        <CreateCardQuote
-          isCreateCardOpen={isCreateCardOpen}
-          setIsCreateCardOpen={setIsCreateCardOpen}
-          refetchCards={refetch}
-        />
+        <MotionBox layout>
+          <CreateCardQuote
+            isCreateCardOpen={isCreateCardOpen}
+            setIsCreateCardOpen={setIsCreateCardOpen}
+            refetchCards={refetch}
+          />
+        </MotionBox>
         <MotionBox
           layout
           display={"flex"}
           width={"100%"}
-          flex={1}
           gap={5}
-          flexWrap={"wrap"}
-          mt={5}>
+          flexWrap={"wrap"}>
           <AnimatePresence>
             {isSuccess &&
               data.pages.map((page) =>
-                page.data.map((card, index) => (
+                page.data.map((card) => (
                   <motion.div
                     layout
                     key={card.id}
-                    initial={{ opacity: 0, x: -100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -100 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     transition={{
-                      duration: 0.15,
-                      delay: index * 0.15,
-                      ease: "circInOut",
-                    }}
-                    style={{ flex: 1 }}>
+                      duration: 0.1,
+                      type: "tween",
+                    }}>
                     <CardQuote info={card} refetchCards={refetch} />
                   </motion.div>
                 )),
@@ -102,24 +98,20 @@ export default function Home() {
             layout
             display={"flex"}
             width={"100%"}
-            flex={1}
             gap={5}
-            flexWrap={"wrap"}
-            mt={5}>
+            flexWrap={"wrap"}>
             <AnimatePresence>
               {Array.from({ length: 3 }).map((_, index) => (
                 <motion.div
                   layout
                   key={index}
-                  initial={{ opacity: 0, x: -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   transition={{
-                    duration: 0.15,
-                    delay: index * 0.15,
-                    ease: "easeInOut",
-                  }}
-                  style={{ flex: 1 }}>
+                    duration: 0.1,
+                    type: "tween",
+                  }}>
                   <Flex
                     width={300}
                     flexDirection={"column"}
@@ -158,7 +150,7 @@ export default function Home() {
             <Spinner size={"md"} color="green" />
           </Flex>
         )}
-      </MotionBox>
+      </Flex>
     </AnimatePresence>
   );
 }

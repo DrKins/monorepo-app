@@ -33,16 +33,22 @@ export default function HeaderControlls({
   };
 
   useEffect(() => {
+    if (searchInput === "") {
+      setFilters({ ...filters, search: "" });
+    }
+  }, [searchInput]);
+
+  useEffect(() => {
     if (debouncedSearchTerm) {
       setFilters({ ...filters, search: debouncedSearchTerm, page: 1 });
     }
   }, [debouncedSearchTerm]);
   return (
     <Flex
-      transition="all 0.35s"
+      mb={5}
+      transition="all 0.1s"
       flexDirection={{ base: "column-reverse", md: "row" }}
-      gap={5}
-      mb={isOpen ? 5 : 0}>
+      gap={5}>
       <InputGroup width={{ base: "100%", md: "fit-content" }}>
         {searchInput && (
           <InputRightElement onClick={handleReset}>

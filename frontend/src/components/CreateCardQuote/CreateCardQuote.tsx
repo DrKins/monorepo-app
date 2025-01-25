@@ -61,11 +61,12 @@ export default function CreateCardQuote({
       {isCreateCardOpen && (
         <MotionCard
           layout
-          initial={{ x: "-20vw", opacity: 0, height: 0 }}
+          initial={{ x: -100, opacity: 0, height: 0 }}
           animate={{ x: 0, opacity: 1, height: "auto" }}
-          exit={{ x: "-20vw", height: 0, width: 0, opacity: 0 }}
-          transition={{ duration: 0.35, ease: "easeInOut" }}
-          maxWidth={"450px"}>
+          exit={{ x: 100, height: 0, width: 0, opacity: 0 }}
+          transition={{ duration: 0.1, ease: "easeInOut" }}
+          maxWidth={"450px"}
+          mb={5}>
           <CardBody display={"flex"} gap={5}>
             <Avatar name={user?.email ?? ""} size={"sm"} />
 
@@ -91,7 +92,7 @@ export default function CreateCardQuote({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.75, ease: "easeInOut" }}
+            transition={{ duration: 0.1, ease: "easeInOut" }}
             display={"flex"}
             gap={5}
             justifyContent={"flex-end"}>

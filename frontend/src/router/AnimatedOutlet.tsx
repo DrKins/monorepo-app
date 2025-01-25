@@ -22,7 +22,7 @@ const AnimatedOutlet = (): React.JSX.Element => {
           <AnimatePresence mode="wait" initial={true}>
             <Flex justifyContent={"space-between"} mb={5}>
               <AnimatePresence mode="wait" initial={true}>
-                <AnimatedLayout variant="slide-left">
+                <AnimatedLayout variant="slide-right">
                   <Logo />
                 </AnimatedLayout>
               </AnimatePresence>
@@ -39,7 +39,7 @@ const AnimatedOutlet = (): React.JSX.Element => {
           flexDir={"column"}>
           <AnimatePresence mode="wait">
             <Flex justifyContent={"space-between"} mb={5}>
-              <AnimatedLayout variant="slide-left">
+              <AnimatedLayout variant="slide-right">
                 <Logo />
               </AnimatedLayout>
               <AnimatedLayout variant="slide-right">

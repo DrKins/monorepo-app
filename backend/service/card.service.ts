@@ -38,8 +38,6 @@ export class CardService {
     }
     if (!cards) throw new Error("Error fetching cards");
 
-    console.log(cards);
-
     const { count, rows: data } = cards;
     const readyForResponseCards = {
       meta: {

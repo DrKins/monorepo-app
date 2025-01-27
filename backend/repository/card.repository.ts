@@ -19,21 +19,19 @@ type GetCardsParams = {
   userId: number;
   page: number;
   limit: number;
+  filter?: string;
 };
 
 type SearchCardsParams = {
   query: string;
   page: number;
   limit: number;
-};
-
-type FilterCards = {
+  filter?: string;
   userId: number;
-  filter: string;
 };
 
 export class CardRepository {
-  async searchCards({ query, page, limit }: SearchCardsParams) {
+  async searchCards({ query, filter, userId, page, limit }: SearchCardsParams) {
     try {
       const cards = await Card.findAndCountAll({
         attributes: [
@@ -51,10 +49,14 @@ export class CardRepository {
           },
         ],
         where: {
+          ...(filter === "mine" ? { userId } : {}),
           content: {
             [Op.like]: `%${query}%`,
           },
         },
+        ...(filter === "recent" || filter === "oldest"
+          ? { order: [["createdAt", filter === "recent" ? "DESC" : "ASC"]] }
+          : {}),
         limit: limit,
         offset: limit * page,
       });
@@ -75,7 +77,7 @@ export class CardRepository {
     }
   }
 
-  async getCards({ userId, page, limit }: GetCardsParams) {
+  async getCards({ userId, page, limit, filter }: GetCardsParams) {
     try {
       const cards = await Card.findAndCountAll({
         attributes: [
@@ -108,6 +110,12 @@ export class CardRepository {
             attributes: ["email", "id"],
           },
         ],
+        where: {
+          ...(filter === "mine" ? { userId } : {}),
+        },
+        ...(filter === "recent" || filter === "oldest"
+          ? { order: [["createdAt", filter === "recent" ? "DESC" : "ASC"]] }
+          : {}),
         limit: limit,
         offset: limit * page,
       });

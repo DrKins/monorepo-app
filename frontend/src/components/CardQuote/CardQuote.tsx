@@ -50,7 +50,7 @@ export default function CardQuote({
   };
 
   return (
-    <Card height={"100%"} background={"whiteAlpha.900"}>
+    <Card height={"100%"} width={400} background={"whiteAlpha.900"}>
       <CardBody display={"flex"} gap={5}>
         <Avatar
           borderWidth={"2px"}

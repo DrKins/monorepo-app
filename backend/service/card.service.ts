@@ -23,54 +23,35 @@ export class CardService {
     if (search) {
       cards = await this.cardRepository.searchCards({
         query: search,
+        filter: sort,
+        userId,
         page: pageNumber,
         limit: this.limit,
       });
     } else {
       cards = await this.cardRepository.getCards({
         userId,
+        filter: sort,
         page: pageNumber,
         limit: this.limit,
       });
     }
     if (!cards) throw new Error("Error fetching cards");
 
-    if (!cards) throw new Error("Error fetching cards");
+    console.log(cards);
 
-    if (sort) {
-      switch (sort) {
-        case "recent":
-          cards.rows.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          );
-          break;
-        case "oldest":
-          cards.rows.sort(
-            (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-          );
-          break;
-        case "mine":
-          cards.rows.filter((card) => card?.owner?.id === userId);
-          break;
-        default:
-          throw new Error(`Unknown sort option: ${sort}`);
-      }
+    const { count, rows: data } = cards;
+    const readyForResponseCards = {
+      meta: {
+        count,
+        currentPage: page ?? 1,
+        nextPage: (page ?? 1) + this.limit < count ? (page ?? 1) + 1 : null,
+        totalPages: Math.ceil(count / this.limit),
+      },
+      data,
+    };
 
-      const { count, rows: data } = cards;
-      const readyForResponseCards = {
-        meta: {
-          count,
-          currentPage: page ?? 1,
-          nextPage: (page ?? 1) + this.limit < count ? (page ?? 1) + 1 : null,
-          totalPages: Math.ceil(count / this.limit),
-        },
-        data,
-      };
-
-      return readyForResponseCards;
-    }
+    return readyForResponseCards;
   }
 
   async createCard(req: Request, res: Response, next?: NextFunction) {

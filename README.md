@@ -1,36 +1,119 @@
 # Monorepo App
 
-This is a monorepo containing a frontend and backend app. The frontend is a React app and the backend is a Node.js app using Express and Sequelize.
+This monorepo contains both a frontend and backend application.
+
+- **Frontend**: React app
+- **Backend**: Node.js app using Express and Sequelize
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- Yarn (v1.22 or higher)
-- Docker (v20.10 or higher)
-- Docker Compose (v1.29 or higher)
+Ensure you have the following installed:
+
+- **Node.js** (v20 or higher)
+- **Yarn** (v1.22 or higher)
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies by running `yarn install-all` in the root directory
-3. Start the Docker containers by running `docker-compose up -d`
-4. Start the frontend by running `yarn start` in the frontend directory
-5. Start the backend by running `yarn start` in the backend directory
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
+2. Install all dependencies:
+   ```bash
+   yarn install-all
+   ```
+3. Start the Docker containers:
+   ```bash
+   docker-compose up --build
+   ```
+4. Start the frontend:
+   ```bash
+   cd frontend
+   yarn start
+   ```
+5. Start the backend:
+   ```bash
+   cd backend
+   yarn start
+   ```
 
 ### Usage
 
-1. Open a web browser and navigate to `http://localhost:4173`
-2. You should see a simple web page with list of boxes and disabled buttons"
+1. Open your browser and navigate to:  
+   `http://localhost:4173`
+2. Login or register to access the home page.
+3. The main page includes:
+   - **Cards with infinite scroll and pagination**.
+   - Options to **filter**, **like**, and **dislike** cards.
+   - The ability to **create new cards**.
 
-### Development
+### User Credentials
 
-1. Make changes to the code in the frontend or backend directory
-2. Run `yarn build` in the frontend directory to rebuild the frontend
-3. Run `yarn build` in the backend directory to rebuild the backend
-4. Restart the Docker containers by running `docker-compose up -d`
-5. Restart the frontend and backend by running `yarn start` in their respective directories
+You can use the following test accounts to log in:
+
+| **Email**         | **Password** |
+| ----------------- | ------------ |
+| admin@gmail.com   | admin        |
+| admin@hotmail.com | password     |
+
+---
+
+## Development
+
+### Steps for Development
+
+1. Make your changes in the **frontend** or **backend** directory.
+2. Rebuild the frontend:
+   ```bash
+   cd frontend
+   yarn build
+   ```
+3. Rebuild the backend:
+   ```bash
+   cd backend
+   yarn build
+   ```
+4. Restart Docker containers:
+   ```bash
+   docker-compose up -d
+   ```
+5. Restart the frontend and backend servers:
+   ```bash
+   yarn start
+   ```
+
+---
+
+## Main Features
+
+- **User Authentication**: Login with JWT sessions
+- **Registration**
+- **Search Functionality**
+- **Filter Options**
+- **Like/Dislike Cards**
+- **Pagination**
+- **Infinite Scroll**
+
+---
+
+## Frontend Dependencies
+
+- **Chakra UI**
+- **Framer Motion**
+- **React Query**
+
+## Backend Dependencies
+
+- **Express**
+- **Bcrypt**
+- **Jose**
+- **Sequelize**
+- **Zod**
+
+---
 
 ## License
 

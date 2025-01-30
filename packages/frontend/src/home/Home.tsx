@@ -6,12 +6,14 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CardQuote from "../components/CardQuote/CardQuote";
 import CreateCardQuote from "../components/CreateCardQuote/CreateCardQuote";
 import HeaderControlls from "../components/HeaderControlls/HeaderControlls";
+import { QUERY_KEYS } from "../constants/queryKeys";
 import { useFiltersContext } from "../context/FiltersContext";
 import { useUserContext } from "../context/UserContext";
 import { useCards } from "../hooks/useCards";
@@ -34,6 +36,7 @@ export default function Home() {
     fetchNextPage,
   } = useCards(filters);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const session = sessionStorage.getItem("token");
@@ -41,6 +44,14 @@ export default function Home() {
       navigate("/login");
     }
   }, [navigate]);
+
+  useEffect(() => {
+    // Reset the query cache when filters change
+    if (filters.sort) {
+      queryClient.resetQueries({ queryKey: [QUERY_KEYS.CARDS, filters.sort] });
+      refetch(); // Refetch the data with the updated filter
+    }
+  }, [filters, queryClient, refetch]); // Only trigger effect when filters change
 
   if (isError) {
     setUser(null);
@@ -72,7 +83,8 @@ export default function Home() {
           display={"flex"}
           width={"100%"}
           gap={5}
-          flexWrap={"wrap"}>
+          flexWrap={"wrap"}
+          key={filters.sort}>
           <AnimatePresence>
             {isSuccess &&
               data.pages.map((page) =>

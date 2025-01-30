@@ -1,0 +1,22 @@
+# Production Dockerfile
+FROM node:20
+
+WORKDIR /app
+
+# Copy package.json and lock file to install dependencies
+COPY package.json package-lock.json ./
+COPY packages/backend/package.json ./packages/backend/
+
+RUN npm install
+
+# Set working directory for backend service
+WORKDIR /app/packages/backend
+
+# Copy only backend files
+COPY packages/backend ./
+
+RUN npm run build
+
+EXPOSE 5000
+
+CMD ["npm", "run", "start:dev"]

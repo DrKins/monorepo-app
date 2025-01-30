@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "module": "CommonJS", // Update this line
-    "rootDir": "./",
+    "moduleResolution": "node",
+    "paths": {
+      "*": ["../../node_modules/*"]
+    },
+    "module": "CommonJS",
+    "baseUrl": ".",
     "outDir": "./dist",
     "typeRoots": ["./types"],
     "esModuleInterop": true,

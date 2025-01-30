@@ -32,6 +32,9 @@ export default function HeaderControlls({
     setFilters({ ...filters, search: "" });
   };
 
+  const handleSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilters({ ...filters, sort: e.target.value });
+  };
   useEffect(() => {
     if (searchInput === "") {
       setFilters({ ...filters, search: "" });
@@ -65,12 +68,12 @@ export default function HeaderControlls({
       </InputGroup>
 
       <Select
-        onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
+        onChange={handleSort}
         width={{ base: "unset", md: "300px" }}
         defaultValue={"recent"}>
-        <option value="mine">Sort by My cards</option>
-        <option value="oldest">Sort by Most oldest</option>
-        <option value="recent">Sort by Most recent</option>
+        <option value="mine">Filter My cards</option>
+        <option value="oldest">Filter oldest</option>
+        <option value="recent">Filter recent</option>
       </Select>
 
       <Button

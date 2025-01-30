@@ -6,8 +6,12 @@
     "install:frontend": "cd frontend && npm install",
     "install:backend": "cd backend && npm install"
   },
-  "keywords": [],
-  "author": "",
+  "private": true,
+  "workspaces": [
+    "packages/frontend",
+    "packages/backend"
+  ],
+  "author": "Fadil Sestan",
   "license": "ISC",
-  "description": ""
+  "description": "Monorepo, simple crud api and react chakra ui project"
 }

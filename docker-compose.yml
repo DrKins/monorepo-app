@@ -1,12 +1,12 @@
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/Dockerfile.backend
     ports:
       - "5001:5000"
     volumes:
-      - ./backend:/app
+      - ./packages/backend:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
@@ -15,26 +15,19 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - app-network
-    entrypoint: [
-        "./wait-for-it.sh",
-        "mysql:3306",
-        "--",
-        "npm",
-        "run",
-        "start:dev",
-      ] # Ensure MySQL is ready before starting the backend
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/Dockerfile.frontend
     ports:
       - "4173:4173"
     volumes:
-      - ./frontend:/app
+      - ./packages/frontend:/app
       - /app/node_modules
     environment:
       - VITE_BACKEND_URL=http://localhost:5001
@@ -54,6 +47,22 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "mysql",
+          "-u",
+          "${MYSQL_USER}",
+          "--password=${MYSQL_DATABASE}",
+        ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     networks:
       - app-network
 

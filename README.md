@@ -18,8 +18,8 @@ Ensure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone [<repository-url>](https://github.com/DrKins/monorepo-app.git)
+   cd monorepo-app
    ```
 2. Install all dependencies:
    ```bash
@@ -28,16 +28,6 @@ Ensure you have the following installed:
 3. Start the Docker containers:
    ```bash
    docker-compose up --build
-   ```
-4. Start the frontend:
-   ```bash
-   cd frontend
-   yarn start
-   ```
-5. Start the backend:
-   ```bash
-   cd backend
-   yarn start
    ```
 
 ### Usage
